@@ -73,3 +73,8 @@ public extension StylizableString.StringInterpolation {
     }
 }
 
+public extension StylizableStringArgument {
+    static func resource(_ resource: StringResourceType, args: StylizableStringArgument...) -> Self {
+        .init(StringResourceFormatter(resource: resource, args: args))
+    }
+}

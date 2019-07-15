@@ -8,7 +8,7 @@ public protocol StylizableTextElement {
     func apply(style: Style, resources: Style.Resources, environment: Environment, isInitialApply: Bool, text: NSAttributedString)
 }
 
-extension EnvironmentContext
+public extension EnvironmentContext
     where Environment: ThemeEnvironmentType,
           Element: StylizableTextElement,
           Element.Style: ThemeStyleType,

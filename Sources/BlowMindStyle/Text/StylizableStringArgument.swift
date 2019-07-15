@@ -13,8 +13,8 @@ public struct StylizableStringArgument<Style: StyleType>: StylizableStringCompon
     }
 }
 
-extension StylizableStringArgument where Style.Resources: TextAttributesProviderType {
-    public static func interpolated(_ string: StylizableString<Style>) -> Self {
+public extension StylizableStringArgument where Style.Resources: TextAttributesProviderType {
+    static func interpolated(_ string: StylizableString<Style>) -> Self {
         .init(string)
     }
 }

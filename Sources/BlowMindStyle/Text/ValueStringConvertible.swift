@@ -43,7 +43,7 @@ public extension StylizableString.StringInterpolation {
     }
 }
 
-extension StylizableStringArgument {
+public extension StylizableStringArgument {
     static func value<Value: CustomStringConvertible>(_ value: Value) -> Self {
         .init(ValueStringConvertible(value: value))
     }

@@ -21,4 +21,8 @@ public extension StylizableString.StringInterpolation {
     mutating func appendInterpolation(style: Style, text: StylizableString) {
         appendComponent(StyleModifier(style: style, target: text))
     }
+
+    mutating func appendInterpolation(style: Style, _ arg: StylizableStringArgument<Style>) {
+        appendComponent(StyleModifier(style: style, target: arg))
+    }
 }

@@ -9,4 +9,10 @@ public struct StringResource: StringResourceType {
 
     /// Bundle this string is in
     public let bundle: Bundle
+
+    public init(key: String, tableName: String, bundle: Bundle) {
+        self.key = key
+        self.tableName = tableName
+        self.bundle = bundle
+    }
 }
