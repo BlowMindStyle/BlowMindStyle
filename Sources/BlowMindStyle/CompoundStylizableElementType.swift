@@ -4,9 +4,9 @@ import RxSwift
 public protocol CompoundStylizableElementType: class {
     associatedtype Environment
 
-    typealias StyleContext = EnvironmentContext<Self, Environment>
+    typealias Context = EnvironmentContext<Self, Environment>
 
-    func applyStylesToChildComponents(_ context: StyleContext) -> Disposable
+    func applyStylesToChildComponents(_ context: Context) -> Disposable
 }
 
 public extension CompoundStylizableElementType {
