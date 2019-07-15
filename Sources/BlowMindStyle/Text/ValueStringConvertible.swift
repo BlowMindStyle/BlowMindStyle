@@ -1,8 +1,8 @@
 import Foundation
 import RxSwift
 
-struct ValueStringConvertible<Value, Style, Properties>: StylizableStringComponentType {
-    typealias ConvertToString = (Value, _ locale: String, _ style: Style, _ properties: (Style) -> Properties) -> String
+struct ValueStringConvertible<Value, Style: StyleType>: StylizableStringComponentType {
+    typealias ConvertToString = (Value, Self.Locale, Style, (Style) -> Style.Resources) -> String
     private let valueObservable: Observable<Value>
     private let convertToString: ConvertToString
 
@@ -16,9 +16,9 @@ struct ValueStringConvertible<Value, Style, Properties>: StylizableStringCompone
         self.convertToString = convertToString
     }
 
-    func buildAttributedString(locale: String, style: Style, propertiesProvider: @escaping (Style) -> Properties) -> Observable<NSAttributedString> {
+    func buildAttributedString(locale: String, style: Style, getResources: @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString> {
         valueObservable.map { [convertToString] value in
-            NSAttributedString(string: convertToString(value, locale, style, propertiesProvider))
+            NSAttributedString(string: convertToString(value, locale, style, getResources))
         }
     }
 }

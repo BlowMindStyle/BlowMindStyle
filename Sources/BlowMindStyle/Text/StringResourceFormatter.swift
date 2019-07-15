@@ -1,25 +1,25 @@
 import Foundation
 import RxSwift
 
-struct StringResourceFormatter<Style, Properties>: StylizableStringComponentType {
+struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType {
     let resource: StringResourceType
-    private let argsFactory: (String, Style, @escaping (Style) -> Properties) -> Observable<[NSAttributedString]>
+    private let argsFactory: (String, Style, @escaping (Style) -> Style.Resources) -> Observable<[NSAttributedString]>
 
-    init(resource: StringResourceType, args: [StylizableStringArgument<Style, Properties>]) {
+    init(resource: StringResourceType, args: [StylizableStringArgument<Style>]) {
         self.resource = resource
         if args.isEmpty {
             self.argsFactory = { _, _, _ in .just([]) }
         } else {
-            self.argsFactory = { locale, style, properties in
-                Observable.zip(args.map { $0.buildAttributedString(locale: locale, style: style, propertiesProvider: properties) })
+            self.argsFactory = { locale, style, getResources in
+                Observable.zip(args.map { $0.buildAttributedString(locale: locale, style: style, getResources: getResources) })
             }
         }
     }
 
-    func buildAttributedString(locale: String, style: Style, propertiesProvider: @escaping (Style) -> Properties) -> Observable<NSAttributedString> {
+    func buildAttributedString(locale: Self.Locale, style: Style, getResources: @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString> {
         let string = getLocalizedString(for: locale)
         let stringParts = splitString(string)
-        return argsFactory(locale, style, propertiesProvider).map { args in
+        return argsFactory(locale, style, getResources).map { args in
             Self.localize(stringParts, with: args)
         }
     }
@@ -68,7 +68,7 @@ struct StringResourceFormatter<Style, Properties>: StylizableStringComponentType
 
 
 public extension StylizableString.StringInterpolation {
-    mutating func appendInterpolation(resource: StringResourceType, args: StylizableStringArgument<Style, Properties>...) {
+    mutating func appendInterpolation(resource: StringResourceType, args: StylizableStringArgument<Style>...) {
         appendComponent(StringResourceFormatter(resource: resource, args: args))
     }
 }

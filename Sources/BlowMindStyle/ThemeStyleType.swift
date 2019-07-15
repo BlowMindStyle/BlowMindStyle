@@ -1,16 +1,21 @@
 public protocol ThemeStyleType: StyleType {
-    associatedtype Properties
     associatedtype Theme
 
-    func getProperties(from theme: Theme) -> Properties
+    func getResources(from theme: Theme) -> Resources
 }
 
 public protocol KeyPathThemeStyleType: ThemeStyleType {
-    var propertiesPath: KeyPath<Theme, Properties> { get }
+    var resourcesPath: KeyPath<Theme, Resources> { get }
 }
 
 public extension KeyPathThemeStyleType {
-    func getProperties(from theme: Theme) -> Properties {
-        return theme[keyPath: propertiesPath]
+    func getResources(from theme: Theme) -> Resources {
+        theme[keyPath: resourcesPath]
+    }
+}
+
+public extension ThemeStyleType where Resources == Void {
+    func getResources(from theme: Theme) -> Void {
+        Void()
     }
 }

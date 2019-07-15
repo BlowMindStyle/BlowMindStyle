@@ -1,13 +1,14 @@
 import Foundation
 import RxSwift
 
-public struct StylizableString<Style, Properties: TextAttributesProviderType>:
+public struct StylizableString<Style: StyleType>:
     ExpressibleByStringLiteral,
     ExpressibleByStringInterpolation,
-    StylizableStringComponentType {
+    StylizableStringComponentType
+    where Style.Resources: TextAttributesProviderType {
 
     public struct StringInterpolation: StringInterpolationProtocol {
-        typealias Builder = (StylizableStringComponentType.Locale, Style, @escaping (Style) -> Properties) -> Observable<NSAttributedString>
+        typealias Builder = (StylizableStringComponentType.Locale, Style, @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString>
         internal var builders: [Builder] = []
 
         public init(literalCapacity: Int, interpolationCount: Int) {
@@ -18,12 +19,12 @@ public struct StylizableString<Style, Properties: TextAttributesProviderType>:
         }
 
         public mutating func appendComponent<Component: StylizableStringComponentType>(_ component: Component)
-            where Component.Style == Style, Component.Properties == Properties {
+            where Component.Style == Style {
                 builders.append(component.buildAttributedString)
         }
     }
 
-    private let componentsBuilder: (Self.Locale, Style, @escaping (Style) -> Properties) -> Observable<[NSAttributedString]>
+    private let componentsBuilder: (Self.Locale, Style, @escaping (Style) -> Style.Resources) -> Observable<[NSAttributedString]>
 
     public init(stringLiteral value: String) {
         componentsBuilder = { _, _, _ in .just([NSAttributedString(string: value)]) }
@@ -40,16 +41,16 @@ public struct StylizableString<Style, Properties: TextAttributesProviderType>:
             return
         }
 
-        componentsBuilder = { locale, style, properties in
+        componentsBuilder = { locale, style, getResources in
             Observable.combineLatest(builders.map { factory in
-                factory(locale, style, properties)
+                factory(locale, style, getResources)
             })
         }
     }
 
-    public func buildAttributedString(locale: String, style: Style, propertiesProvider: @escaping (Style) -> Properties) -> Observable<NSAttributedString> {
-        componentsBuilder(locale, style, propertiesProvider).map { components in
-            let attributes = propertiesProvider(style).textAttributes
+    public func buildAttributedString(locale: Self.Locale, style: Style, getResources: @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString> {
+        componentsBuilder(locale, style, getResources).map { components in
+            let attributes = getResources(style).textAttributes
 
             let result = NSMutableAttributedString()
 

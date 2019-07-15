@@ -1,18 +1,16 @@
 import RxSwift
 
 public protocol StylizableElement {
-    associatedtype Style
-    associatedtype Properties
+    associatedtype Style: StyleType
     associatedtype Environment
 
-    func apply(style: Style, properties: Properties, environment: Environment, isInitialApply: Bool)
+    func apply(style: Style, resources: Style.Resources, environment: Environment, isInitialApply: Bool)
 }
 
 public extension EnvironmentContext
     where Environment: ThemeEnvironmentType,
           Element: StylizableElement,
           Element.Style: ThemeStyleType,
-          Element.Style.Properties == Element.Properties,
           Element.Style.Theme == Environment.Theme,
           Element.Environment == Environment {
 
@@ -21,7 +19,7 @@ public extension EnvironmentContext
             .subscribe(onNext: { [element = self.element] (index, env) in
                 element.apply(
                     style: style,
-                    properties: style.getProperties(from: env.theme),
+                    resources: style.getResources(from: env.theme),
                     environment: env,
                     isInitialApply: index == 0)
             })
