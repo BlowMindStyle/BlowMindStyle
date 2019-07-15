@@ -8,9 +8,6 @@ public protocol StylizableElement {
     func apply(style: Style, properties: Properties, environment: Environment, isInitialApply: Bool)
 }
 
-struct StylizableElements {
-}
-
 public extension EnvironmentContext
     where Environment: ThemeEnvironmentType,
           Element: StylizableElement,
