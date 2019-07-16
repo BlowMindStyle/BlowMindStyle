@@ -1,11 +1,10 @@
 import Foundation
 import RxSwift
 
-public struct StylizableString<Style: EnvironmentStyleType>:
+public struct StylizableString<Style: TextStyleType>:
     ExpressibleByStringLiteral,
     ExpressibleByStringInterpolation,
-    StylizableStringComponentType
-    where Style.Resources: TextAttributesProviderType {
+    StylizableStringComponentType {
 
     public struct StringInterpolation: StringInterpolationProtocol {
         typealias Builder = (Style, Style.Environment) -> Observable<NSAttributedString>
@@ -51,27 +50,7 @@ public struct StylizableString<Style: EnvironmentStyleType>:
     public func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString> {
         componentsBuilder(style, environment).map { components in
             let attributes = style.getResources(from: environment).textAttributes
-
-            let result = NSMutableAttributedString()
-
-            for component in components {
-                let mutableCopy = NSMutableAttributedString(attributedString: component)
-                var attributesToRestore: [(NSMutableAttributedString.Key, Any, NSRange)] = []
-                for attr in attributes.keys {
-                    component.enumerateAttribute(attr, in: NSMakeRange(0, component.length), options: []) { (value, range, _) in
-                        guard let value = value else { return }
-                        attributesToRestore.append((attr, value, range))
-                    }
-                }
-
-                mutableCopy.addAttributes(attributes, range: NSMakeRange(0, component.length))
-                for (key, value, range) in attributesToRestore {
-                    mutableCopy.addAttribute(key, value: value, range: range)
-                }
-                result.append(mutableCopy)
-            }
-
-            return result
+            return AttributedStringBuilder.build(components: components, attributes: attributes)
         }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import RxSwift
 
-struct ValueStringConvertible<Value, Style: EnvironmentStyleType>: StylizableStringComponentType {
+struct ValueStringConvertible<Value, Style: TextStyleType>: StylizableStringComponentType {
     typealias ConvertToString = (Value, Style, Style.Environment) -> String
     private let valueObservable: Observable<Value>
     private let convertToString: ConvertToString

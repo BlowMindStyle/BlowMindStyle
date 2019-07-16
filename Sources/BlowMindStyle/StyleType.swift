@@ -7,3 +7,5 @@ public protocol EnvironmentStyleType: StyleType {
     associatedtype Environment
     func getResources(from environment: Environment) -> Resources
 }
+
+public protocol TextStyleType: EnvironmentStyleType where Resources: TextAttributesProviderType { }

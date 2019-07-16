@@ -6,7 +6,7 @@ private let regex: NSRegularExpression = {
     return try! NSRegularExpression(pattern: formatSpecifiers, options: .caseInsensitive)
 }()
 
-struct StringResourceFormatter<Style: EnvironmentStyleType>: StylizableStringComponentType where Style.Environment: LocaleEnvironmentType {
+struct StringResourceFormatter<Style: TextStyleType>: StylizableStringComponentType where Style.Environment: LocaleEnvironmentType {
     let resource: StringResourceType
     private let argsFactory: (Style, Style.Environment) -> Observable<[NSAttributedString]>
 
@@ -15,8 +15,9 @@ struct StringResourceFormatter<Style: EnvironmentStyleType>: StylizableStringCom
         if args.isEmpty {
             self.argsFactory = { _, _ in .just([]) }
         } else {
+            let renderers = args.map { $0.renderer }
             self.argsFactory = { style, environment in
-                Observable.zip(args.map { $0.buildAttributedString(style: style, environment: environment) })
+                Observable.zip(renderers.map { $0.buildAttributedString(style: style, environment: environment) })
             }
         }
     }

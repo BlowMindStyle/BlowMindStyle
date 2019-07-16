@@ -42,6 +42,6 @@ public extension StylizableString.StringInterpolation where Style.Resources: Bol
     }
 
     mutating func appendInterpolation(bold arg: StylizableStringArgument<Style>) {
-        appendComponent(arg.bold)
+        appendComponent(arg.renderer.bold)
     }
 }

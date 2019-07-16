@@ -9,17 +9,13 @@ public protocol StylizableTextElement {
 
 public extension EnvironmentContext
     where Element: StylizableTextElement,
-          Element.Style: EnvironmentStyleType,
-          Element.Style.Environment == Environment,
-          Element.Style.Resources: TextAttributesProviderType {
+          Element.Style: TextStyleType,
+          Element.Style.Environment == Environment {
 
     func apply(_ style: Element.Style = .default, text: StylizableString<Element.Style>) -> Disposable {
         let environmentAndText = environment
             .flatMapLatest { env -> Observable<(Environment, NSAttributedString)> in
-                text.buildAttributedString(
-                    style: style,
-                    environment: env)
-                    .map { (env, $0) }
+                text.buildAttributedString(style: style, environment: env).map { (env, $0) }
         }
 
         return environmentAndText.enumerated()
