@@ -3,7 +3,6 @@ import RxSwift
 
 struct StyleModifier<Target: StylizableStringComponentType>: StylizableStringComponentType {
     typealias Style = Target.Style
-    typealias Environment = Target.Environment
 
     let style: Style
     let target: Target
@@ -13,8 +12,8 @@ struct StyleModifier<Target: StylizableStringComponentType>: StylizableStringCom
         self.target = target
     }
 
-    func buildAttributedString(style: Target.Style, environment: Environment, getResources: @escaping (Target.Style, Environment) -> Target.Style.Resources) -> Observable<NSAttributedString> {
-        target.buildAttributedString(style: style, environment: environment, getResources: getResources)
+    func buildAttributedString(style: Target.Style, environment: Style.Environment) -> Observable<NSAttributedString> {
+        target.buildAttributedString(style: style, environment: environment)
     }
 }
 
@@ -23,7 +22,7 @@ public extension StylizableString.StringInterpolation {
         appendComponent(StyleModifier(style: style, target: text))
     }
 
-    mutating func appendInterpolation(style: Style, _ arg: StylizableStringArgument<Style, Environment>) {
+    mutating func appendInterpolation(style: Style, _ arg: StylizableStringArgument<Style>) {
         appendComponent(StyleModifier(style: style, target: arg))
     }
 }

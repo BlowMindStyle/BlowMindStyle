@@ -7,7 +7,6 @@ public protocol BoldFontPropertiesProviderType {
 
 public struct BoldStringModifier<Target: StylizableStringComponentType> {
     public typealias Style = Target.Style
-    public typealias Environment = Target.Environment
 
     let target: Target
 
@@ -23,9 +22,9 @@ public extension StylizableStringComponentType {
 }
 
 extension BoldStringModifier: StylizableStringComponentType where Style.Resources: BoldFontPropertiesProviderType {
-    public func buildAttributedString(style: Style, environment: Environment, getResources: @escaping (Style, Environment) -> Style.Resources) -> Observable<NSAttributedString> {
-        let font = getResources(style, environment).fontForBoldText
-        return target.buildAttributedString(style: style, environment: environment, getResources: getResources).map { string in
+    public func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString> {
+        let font = style.getResources(from: environment).fontForBoldText
+        return target.buildAttributedString(style: style, environment: environment).map { string in
             let mutable = NSMutableAttributedString(attributedString: string)
             mutable.addAttribute(.font, value: font, range: NSMakeRange(0, string.length))
             return mutable
@@ -42,7 +41,7 @@ public extension StylizableString.StringInterpolation where Style.Resources: Bol
         appendComponent(ValueStringConvertible(valueObservable: observable.asObservable()).bold)
     }
 
-    mutating func appendInterpolation(bold arg: StylizableStringArgument<Style, Environment>) {
+    mutating func appendInterpolation(bold arg: StylizableStringArgument<Style>) {
         appendComponent(arg.bold)
     }
 }

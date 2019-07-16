@@ -2,12 +2,7 @@ import Foundation
 import RxSwift
 
 public protocol StylizableStringComponentType {
-    associatedtype Style: StyleType
-    associatedtype Environment = Void
+    associatedtype Style: EnvironmentStyleType
 
-    func buildAttributedString(
-        style: Style,
-        environment: Environment,
-        getResources: @escaping (Style, Environment) -> Style.Resources)
-        -> Observable<NSAttributedString>
+    func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString>
 }

@@ -2,16 +2,14 @@ import RxSwift
 
 public protocol StylizableElement {
     associatedtype Style: StyleType
-    associatedtype Environment
 
-    func apply(style: Style, resources: Style.Resources, environment: Environment, isInitialApply: Bool)
+    func apply(style: Style, resources: Style.Resources, isInitialApply: Bool)
 }
 
 public extension EnvironmentContext
     where Element: StylizableElement,
           Element.Style: EnvironmentStyleType,
-          Element.Style.Environment == Environment,
-          Element.Environment == Environment {
+          Element.Style.Environment == Environment {
 
     func apply(_ style: Element.Style = .default) -> Disposable {
         environment.enumerated()
@@ -19,7 +17,6 @@ public extension EnvironmentContext
                 element.apply(
                     style: style,
                     resources: style.getResources(from: env),
-                    environment: env,
                     isInitialApply: index == 0)
             })
     }

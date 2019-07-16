@@ -1,33 +1,33 @@
 import Foundation
 import RxSwift
 
-public struct StylizableString<Style: StyleType, Environment>:
+public struct StylizableString<Style: EnvironmentStyleType>:
     ExpressibleByStringLiteral,
     ExpressibleByStringInterpolation,
     StylizableStringComponentType
     where Style.Resources: TextAttributesProviderType {
 
     public struct StringInterpolation: StringInterpolationProtocol {
-        typealias Builder = (Style, Environment, @escaping (Style, Environment) -> Style.Resources) -> Observable<NSAttributedString>
+        typealias Builder = (Style, Style.Environment) -> Observable<NSAttributedString>
         internal var builders: [Builder] = []
 
         public init(literalCapacity: Int, interpolationCount: Int) {
         }
 
         public mutating func appendLiteral(_ literal: String) {
-            builders.append { _, _, _ in .just(NSAttributedString(string: literal)) }
+            builders.append { _, _ in .just(NSAttributedString(string: literal)) }
         }
 
         public mutating func appendComponent<Component: StylizableStringComponentType>(_ component: Component)
-            where Component.Style == Style, Component.Environment == Environment {
+            where Component.Style == Style {
                 builders.append(component.buildAttributedString)
         }
     }
 
-    private let componentsBuilder: (Style, Environment, @escaping (Style, Environment) -> Style.Resources) -> Observable<[NSAttributedString]>
+    private let componentsBuilder: (Style, Style.Environment) -> Observable<[NSAttributedString]>
 
     public init(stringLiteral value: String) {
-        componentsBuilder = { _, _, _ in .just([NSAttributedString(string: value)]) }
+        componentsBuilder = { _, _ in .just([NSAttributedString(string: value)]) }
     }
 
     public init(_ string: StylizableString) {
@@ -37,20 +37,20 @@ public struct StylizableString<Style: StyleType, Environment>:
     public init(stringInterpolation: StringInterpolation) {
         let builders = stringInterpolation.builders
         guard !builders.isEmpty else {
-            componentsBuilder = { _, _, _ in .just([NSAttributedString()]) }
+            componentsBuilder = { _, _ in .just([NSAttributedString()]) }
             return
         }
 
-        componentsBuilder = { locale, style, getResources in
+        componentsBuilder = { style, env in
             Observable.combineLatest(builders.map { factory in
-                factory(locale, style, getResources)
+                factory(style, env)
             })
         }
     }
 
-    public func buildAttributedString(style: Style, environment: Environment, getResources: @escaping (Style, Environment) -> Style.Resources) -> Observable<NSAttributedString> {
-        componentsBuilder(style, environment, getResources).map { components in
-            let attributes = getResources(style, environment).textAttributes
+    public func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString> {
+        componentsBuilder(style, environment).map { components in
+            let attributes = style.getResources(from: environment).textAttributes
 
             let result = NSMutableAttributedString()
 
