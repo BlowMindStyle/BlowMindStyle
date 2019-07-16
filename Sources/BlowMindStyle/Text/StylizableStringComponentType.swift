@@ -3,12 +3,11 @@ import RxSwift
 
 public protocol StylizableStringComponentType {
     associatedtype Style: StyleType
-
-    typealias Locale = String
+    associatedtype Environment = Void
 
     func buildAttributedString(
-        locale: Locale,
         style: Style,
-        getResources: @escaping (Style) -> Style.Resources)
+        environment: Environment,
+        getResources: @escaping (Style, Environment) -> Style.Resources)
         -> Observable<NSAttributedString>
 }

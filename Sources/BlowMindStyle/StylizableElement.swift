@@ -8,10 +8,9 @@ public protocol StylizableElement {
 }
 
 public extension EnvironmentContext
-    where Environment: ThemeEnvironmentType,
-          Element: StylizableElement,
-          Element.Style: ThemeStyleType,
-          Element.Style.Theme == Environment.Theme,
+    where Element: StylizableElement,
+          Element.Style: EnvironmentStyleType,
+          Element.Style.Environment == Environment,
           Element.Environment == Environment {
 
     func apply(_ style: Element.Style = .default) -> Disposable {
@@ -19,7 +18,7 @@ public extension EnvironmentContext
             .subscribe(onNext: { [element = self.element] (index, env) in
                 element.apply(
                     style: style,
-                    resources: style.getResources(from: env.theme),
+                    resources: style.getResources(from: env),
                     environment: env,
                     isInitialApply: index == 0)
             })

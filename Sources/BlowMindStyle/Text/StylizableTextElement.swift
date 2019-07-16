@@ -9,21 +9,19 @@ public protocol StylizableTextElement {
 }
 
 public extension EnvironmentContext
-    where Environment: ThemeEnvironmentType,
-          Element: StylizableTextElement,
-          Element.Style: ThemeStyleType,
-          Element.Style.Theme == Environment.Theme,
+    where Element: StylizableTextElement,
+          Element.Style: EnvironmentStyleType,
+          Element.Style.Environment == Environment,
           Element.Environment == Environment,
-          Environment: LocaleEnvironmentType,
           Element.Style.Resources: TextAttributesProviderType {
 
-    func apply(_ style: Element.Style = .default, text: StylizableString<Element.Style>) -> Disposable {
+    func apply(_ style: Element.Style = .default, text: StylizableString<Element.Style, Environment>) -> Disposable {
         let environmentAndText = environment
             .flatMapLatest { env -> Observable<(Environment, NSAttributedString)> in
                 text.buildAttributedString(
-                    locale: env.locale,
                     style: style,
-                    getResources: { style in style.getResources(from: env.theme) })
+                    environment: env,
+                    getResources: { style, env in style.getResources(from: env) })
                     .map { (env, $0) }
         }
 
@@ -32,7 +30,7 @@ public extension EnvironmentContext
                 let (env, text) = tuple
                 return element.apply(
                     style: style,
-                    resources: style.getResources(from: env.theme),
+                    resources: style.getResources(from: env),
                     environment: env,
                     isInitialApply: index == 0,
                     text: text)

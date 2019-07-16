@@ -6,31 +6,31 @@ private let regex: NSRegularExpression = {
     return try! NSRegularExpression(pattern: formatSpecifiers, options: .caseInsensitive)
 }()
 
-struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType {
+struct StringResourceFormatter<Style: StyleType, Environment>: StylizableStringComponentType where Environment: LocaleEnvironmentType {
     let resource: StringResourceType
-    private let argsFactory: (String, Style, @escaping (Style) -> Style.Resources) -> Observable<[NSAttributedString]>
+    private let argsFactory: (Style, Environment, @escaping (Style, Environment) -> Style.Resources) -> Observable<[NSAttributedString]>
 
-    init(resource: StringResourceType, args: [StylizableStringArgument<Style>]) {
+    init(resource: StringResourceType, args: [StylizableStringArgument<Style, Environment>]) {
         self.resource = resource
         if args.isEmpty {
             self.argsFactory = { _, _, _ in .just([]) }
         } else {
-            self.argsFactory = { locale, style, getResources in
-                Observable.zip(args.map { $0.buildAttributedString(locale: locale, style: style, getResources: getResources) })
+            self.argsFactory = { style, environment, getResources in
+                Observable.zip(args.map { $0.buildAttributedString(style: style, environment: environment, getResources: getResources) })
             }
         }
     }
 
-    func buildAttributedString(locale: Self.Locale, style: Style, getResources: @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString> {
-        let string = getLocalizedString(for: locale)
+    func buildAttributedString(style: Style, environment: Environment, getResources: @escaping (Style, Environment) -> Style.Resources) -> Observable<NSAttributedString> {
+        let string = getLocalizedString(lprojName: environment.locale.lprojName)
         let stringParts = splitString(string)
-        return argsFactory(locale, style, getResources).map { args in
+        return argsFactory(style, environment, getResources).map { args in
             Self.localize(stringParts, with: args)
         }
     }
 
-    private func getLocalizedString(for locale: String) -> NSString {
-        guard let languageBundlePath = resource.bundle.path(forResource: locale, ofType: "lproj"),
+    private func getLocalizedString(lprojName: String) -> NSString {
+        guard let languageBundlePath = resource.bundle.path(forResource: lprojName, ofType: "lproj"),
             let languageBundle = Bundle(path: languageBundlePath) else {
                 return resource.bundle.localizedString(forKey: resource.key, value: nil, table: resource.tableName) as NSString
         }
@@ -69,14 +69,13 @@ struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType 
     }
 }
 
-
-public extension StylizableString.StringInterpolation {
-    mutating func appendInterpolation(resource: StringResourceType, args: StylizableStringArgument<Style>...) {
+public extension StylizableString.StringInterpolation where Environment: LocaleEnvironmentType {
+    mutating func appendInterpolation(resource: StringResourceType, args: StylizableStringArgument<Style, Environment>...) {
         appendComponent(StringResourceFormatter(resource: resource, args: args))
     }
 }
 
-public extension StylizableStringArgument {
+public extension StylizableStringArgument where Environment: LocaleEnvironmentType {
     static func resource(_ resource: StringResourceType, args: StylizableStringArgument...) -> Self {
         .init(StringResourceFormatter(resource: resource, args: args))
     }

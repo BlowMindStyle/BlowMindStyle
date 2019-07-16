@@ -1,8 +1,8 @@
 import Foundation
 import RxSwift
 
-struct ValueStringConvertible<Value, Style: StyleType>: StylizableStringComponentType {
-    typealias ConvertToString = (Value, Self.Locale, Style, (Style) -> Style.Resources) -> String
+struct ValueStringConvertible<Value, Style: StyleType, Environment>: StylizableStringComponentType {
+    typealias ConvertToString = (Value, Style, Environment, (Style, Environment) -> Style.Resources) -> String
     private let valueObservable: Observable<Value>
     private let convertToString: ConvertToString
 
@@ -16,9 +16,9 @@ struct ValueStringConvertible<Value, Style: StyleType>: StylizableStringComponen
         self.convertToString = convertToString
     }
 
-    func buildAttributedString(locale: String, style: Style, getResources: @escaping (Style) -> Style.Resources) -> Observable<NSAttributedString> {
+    func buildAttributedString(style: Style, environment: Environment, getResources: @escaping (Style, Environment) -> Style.Resources) -> Observable<NSAttributedString> {
         valueObservable.map { [convertToString] value in
-            NSAttributedString(string: convertToString(value, locale, style, getResources))
+            NSAttributedString(string: convertToString(value, style, environment, getResources))
         }
     }
 }
@@ -52,8 +52,8 @@ public extension StylizableStringArgument {
         .init(ValueStringConvertible(value: value, convertToString: { value, _, _, _ in converter(value) }))
     }
 
-    static func value<Value>(_ value: Value, with converter: @escaping (Value, _ locale: String) -> String) -> Self {
-        .init(ValueStringConvertible(value: value, convertToString: { value, locale, _, _ in converter(value, locale) }))
+    static func value<Value>(_ value: Value, with converter: @escaping (Value, Environment) -> String) -> Self {
+        .init(ValueStringConvertible(value: value, convertToString: { value, _, env, _ in converter(value, env) }))
     }
 
     static func observable<Value: CustomStringConvertible>(_ observable: Observable<Value>) -> Self {
@@ -64,7 +64,7 @@ public extension StylizableStringArgument {
         .init(ValueStringConvertible(valueObservable: observable, convertToString: { value, _, _, _ in converter(value) }))
     }
 
-    static func observable<Value>(_ observable: Observable<Value>, with converter: @escaping (Value, _ locale: String) -> String) -> Self {
-        .init(ValueStringConvertible(valueObservable: observable, convertToString: { value, locale, _, _ in converter(value, locale) }))
+    static func observable<Value>(_ observable: Observable<Value>, with converter: @escaping (Value, Environment) -> String) -> Self {
+        .init(ValueStringConvertible(valueObservable: observable, convertToString: { value, _, env, _ in converter(value, env) }))
     }
 }
