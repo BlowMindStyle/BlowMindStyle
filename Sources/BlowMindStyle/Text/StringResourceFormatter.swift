@@ -1,6 +1,11 @@
 import Foundation
 import RxSwift
 
+private let regex: NSRegularExpression = {
+    let formatSpecifiers = "(%@)|(%d)|(%x)|(%o)|(%ld)|(%lx)|(%lu)|(%f)|(%e)|(%g)|(%c)|(%s)|(%a)"
+    return try! NSRegularExpression(pattern: formatSpecifiers, options: .caseInsensitive)
+}()
+
 struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType {
     let resource: StringResourceType
     private let argsFactory: (String, Style, @escaping (Style) -> Style.Resources) -> Observable<[NSAttributedString]>
@@ -34,8 +39,6 @@ struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType 
     }
 
     private func splitString(_ string: NSString) -> [String] {
-        let formatSpecifiers = "(%@)|(%d)|(%x)|(%o)|(%ld)|(%lx)|(%lu)|(%f)|(%e)|(%g)|(%c)|(%s)|(%a)"
-        let regex = try! NSRegularExpression(pattern: formatSpecifiers, options: .caseInsensitive)
         let matches = regex.matches(in: string as String, options: [], range: NSMakeRange(0, string.length))
 
         var result: [String] = []
@@ -43,7 +46,7 @@ struct StringResourceFormatter<Style: StyleType>: StylizableStringComponentType 
 
         var prevMatchEnd = 0
         for match in matches {
-            result.append(string.substring(with: NSMakeRange(prevMatchEnd, match.range.lowerBound)))
+            result.append(string.substring(with: NSMakeRange(prevMatchEnd, match.range.lowerBound - prevMatchEnd)))
             prevMatchEnd = match.range.upperBound
         }
 
