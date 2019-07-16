@@ -13,7 +13,7 @@ struct StyleModifier<Target: StylizableStringComponentType>: StylizableStringCom
     }
 
     func buildAttributedString(style: Target.Style, environment: Style.Environment) -> Observable<NSAttributedString> {
-        target.buildAttributedString(style: style, environment: environment)
+        target.buildAttributedString(style: self.style, environment: environment)
     }
 }
 
