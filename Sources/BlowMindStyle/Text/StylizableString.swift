@@ -21,12 +21,16 @@ public struct StylizableString<Style: TextStyleType>:
             where Component.Style == Style {
                 builders.append(component.buildAttributedString)
         }
+
+        public mutating func appendBuilder(_ builder: @escaping (Style, Style.Environment) -> Observable<NSAttributedString>) {
+            builders.append(builder)
+        }
     }
 
-    private let componentsBuilder: (Style, Style.Environment) -> Observable<[NSAttributedString]>
+    private let componentsBuilder: (Style, Style.Environment) -> Observable<NSAttributedString>
 
     public init(stringLiteral value: String) {
-        componentsBuilder = { _, _ in .just([NSAttributedString(string: value)]) }
+        componentsBuilder = { _, _ in .just(NSAttributedString(string: value)) }
     }
 
     public init(_ string: StylizableString) {
@@ -36,21 +40,31 @@ public struct StylizableString<Style: TextStyleType>:
     public init(stringInterpolation: StringInterpolation) {
         let builders = stringInterpolation.builders
         guard !builders.isEmpty else {
-            componentsBuilder = { _, _ in .just([NSAttributedString()]) }
+            componentsBuilder = { _, _ in .just(NSAttributedString()) }
             return
         }
 
         componentsBuilder = { style, env in
-            Observable.combineLatest(builders.map { factory in
-                factory(style, env)
-            })
+            Observable
+                .combineLatest(builders.map { factory in
+                    factory(style, env)
+                })
+                .map { attributedStrings in
+                    let attributes = style.getResources(from: env).textAttributes
+                    return AttributedStringBuilder.build(components: attributedStrings, attributes: attributes)
+            }
         }
     }
 
+    public init(builder: @escaping (Style, Style.Environment) -> Observable<NSAttributedString>) {
+        componentsBuilder = builder
+    }
+
+    public init<Component: StylizableStringComponentType>(component: Component) where Component.Style == Style {
+        componentsBuilder = component.buildAttributedString
+    }
+
     public func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString> {
-        componentsBuilder(style, environment).map { components in
-            let attributes = style.getResources(from: environment).textAttributes
-            return AttributedStringBuilder.build(components: components, attributes: attributes)
-        }
+        componentsBuilder(style, environment)
     }
 }
