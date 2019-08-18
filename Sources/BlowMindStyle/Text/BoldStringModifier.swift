@@ -51,8 +51,4 @@ public extension StylizableString.StringInterpolation where Style.Resources: Bol
     mutating func appendInterpolation<Value: CustomStringConvertible>(bold observable: Observable<Value>) {
         appendComponent(ValueStringConvertible(valueObservable: observable.asObservable()).bold)
     }
-
-    mutating func appendInterpolation(bold arg: StylizableStringArgument<Style>) {
-        appendComponent(arg.renderer.bold)
-    }
 }

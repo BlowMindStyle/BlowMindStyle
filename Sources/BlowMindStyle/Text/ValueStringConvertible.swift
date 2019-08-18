@@ -42,29 +42,3 @@ public extension StylizableString.StringInterpolation {
         appendComponent(ValueStringConvertible(valueObservable: observable.asObservable()))
     }
 }
-
-public extension StylizableStringArgument {
-    static func value<Value: CustomStringConvertible>(_ value: Value) -> Self {
-        .init(ValueStringConvertible(value: value))
-    }
-
-    static func value<Value>(_ value: Value, with converter: @escaping (Value) -> String) -> Self {
-        .init(ValueStringConvertible(value: value, convertToString: { value, _, _ in converter(value) }))
-    }
-
-    static func value<Value>(_ value: Value, with converter: @escaping (Value, Style.Environment) -> String) -> Self {
-        .init(ValueStringConvertible(value: value, convertToString: { value, _, env in converter(value, env) }))
-    }
-
-    static func observable<Value: CustomStringConvertible>(_ observable: Observable<Value>) -> Self {
-        .init(ValueStringConvertible(valueObservable: observable))
-    }
-
-    static func observable<Value>(_ observable: Observable<Value>, with converter: @escaping (Value) -> String) -> Self {
-        .init(ValueStringConvertible(valueObservable: observable, convertToString: { value, _, _ in converter(value) }))
-    }
-
-    static func observable<Value>(_ observable: Observable<Value>, with converter: @escaping (Value, Style.Environment) -> String) -> Self {
-        .init(ValueStringConvertible(valueObservable: observable, convertToString: { value, _, env in converter(value, env) }))
-    }
-}
