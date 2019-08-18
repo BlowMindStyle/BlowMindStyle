@@ -27,10 +27,10 @@ public struct StylizableString<Style: TextStyleType>:
         }
     }
 
-    private let componentsBuilder: (Style, Style.Environment) -> Observable<NSAttributedString>
+    private let builder: (Style, Style.Environment) -> Observable<NSAttributedString>
 
     public init(stringLiteral value: String) {
-        componentsBuilder = { _, _ in .just(NSAttributedString(string: value)) }
+        builder = { _, _ in .just(NSAttributedString(string: value)) }
     }
 
     public init(_ string: StylizableString) {
@@ -40,11 +40,11 @@ public struct StylizableString<Style: TextStyleType>:
     public init(stringInterpolation: StringInterpolation) {
         let builders = stringInterpolation.builders
         guard !builders.isEmpty else {
-            componentsBuilder = { _, _ in .just(NSAttributedString()) }
+            builder = { _, _ in .just(NSAttributedString()) }
             return
         }
 
-        componentsBuilder = { style, env in
+        builder = { style, env in
             Observable
                 .combineLatest(builders.map { factory in
                     factory(style, env)
@@ -57,14 +57,14 @@ public struct StylizableString<Style: TextStyleType>:
     }
 
     public init(builder: @escaping (Style, Style.Environment) -> Observable<NSAttributedString>) {
-        componentsBuilder = builder
+        self.builder = builder
     }
 
     public init<Component: StylizableStringComponentType>(component: Component) where Component.Style == Style {
-        componentsBuilder = component.buildAttributedString
+        builder = component.buildAttributedString
     }
 
     public func buildAttributedString(style: Style, environment: Style.Environment) -> Observable<NSAttributedString> {
-        componentsBuilder(style, environment)
+        builder(style, environment)
     }
 }
