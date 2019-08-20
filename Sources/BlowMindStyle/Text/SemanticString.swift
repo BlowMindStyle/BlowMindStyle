@@ -74,6 +74,10 @@ extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpo
         components = string.components
     }
 
+    public init(string: String) {
+        components = [.init(styles: [], content: .plain(string))]
+    }
+
     public init(dynamic provider: @escaping (LocaleInfoType) -> SemanticString, styles: [TextStyle] = []) {
         components = [.init(styles: styles, content: .dynamic(provider))]
     }

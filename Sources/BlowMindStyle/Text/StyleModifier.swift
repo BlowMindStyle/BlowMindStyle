@@ -22,3 +22,9 @@ public extension StylizableString.StringInterpolation {
         appendComponent(StyleModifier(style: style, target: text))
     }
 }
+
+public extension StylizableString.StringInterpolation where Style: SemanticStringStyleType, Style.Environment: LocaleEnvironmentType {
+    mutating func appendInterpolation(style: Style, semantic string: SemanticString) {
+        appendComponent(StyleModifier(style: style, target: StylizableString(semantic: string)))
+    }
+}
