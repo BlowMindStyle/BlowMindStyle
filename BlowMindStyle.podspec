@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'BlowMindStyle'
-  s.version          = '0.8.1'
+  s.version          = '0.8.2'
   s.summary          = 'Framework that will help to orginize styles in your app.'
   s.description      = <<-DESC
 Framework that will help to orginize styles in your app. Requires swift 5.1 and XCode 11.

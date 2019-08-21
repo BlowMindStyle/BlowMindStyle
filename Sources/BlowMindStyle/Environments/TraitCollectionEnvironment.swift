@@ -10,6 +10,12 @@ public protocol TraitCollectionEnvironmentType {
 public struct TraitCollectionEnvironment: TraitCollectionEnvironmentType {
     public let traitCollection: UITraitCollection
     public let previousTraitCollection: UITraitCollection?
+
+    public init(traitCollection: UITraitCollection,
+                previousTraitCollection: UITraitCollection?) {
+        self.traitCollection = traitCollection
+        self.previousTraitCollection = previousTraitCollection
+    }
 }
 
 public extension TraitCollectionEnvironmentType {
