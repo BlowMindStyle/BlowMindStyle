@@ -5,6 +5,42 @@ public protocol SemanticStringStyleType: TextStyleType {
     func getResources(from environment: Environment, for textStyle: SemanticString.TextStyle) -> Resources?
 }
 
+public protocol SemanticStringAttributesProviderType {
+    var localeInfo: LocaleInfoType { get }
+    func getAttributes(for textStyle: SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?
+}
+
+public struct SemanticStringAttributesProvider: SemanticStringAttributesProviderType {
+
+    private let _getAttributes: (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?
+    public let localeInfo: LocaleInfoType
+
+    public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) where Style.Environment: LocaleEnvironmentType {
+        localeInfo = environment.localeInfo
+
+        _getAttributes = { semanticStringStyle in
+            if let semanticStringStyle = semanticStringStyle {
+                return style.getResources(from: environment, for: semanticStringStyle)?.textAttributes
+            } else {
+                return style.getResources(from: environment).textAttributes
+            }
+        }
+    }
+
+    public init(localeInfo: LocaleInfoType, getAttributes: @escaping (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?) {
+        self.localeInfo = localeInfo
+        _getAttributes = getAttributes
+    }
+
+    public func getAttributes(for textStyle: SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]? {
+        _getAttributes(textStyle)
+    }
+
+    public static var `default`: SemanticStringAttributesProvider {
+        SemanticStringAttributesProvider(localeInfo: LocaleInfo.system, getAttributes: { _ in nil })
+    }
+}
+
 public struct SemanticString {
     let components: [StringComponent]
 }
@@ -143,22 +179,26 @@ extension SemanticString {
 }
 
 extension SemanticString {
+    public func getAttributedString(provider: SemanticStringAttributesProviderType) -> NSAttributedString {
+        let commonAttributes = provider.getAttributes(for: nil) ?? [:]
+
+        let localeInfo = provider.localeInfo
+
+        let strings = components.map { component in
+            getAttributedString(
+                component: component,
+                localeInfo: localeInfo,
+                getAttributes: { textStyle in provider.getAttributes(for: textStyle)  })
+        }
+
+        let resultString = AttributedStringBuilder.build(components: strings, attributes: commonAttributes)
+        return resultString
+    }
+
     public func getAttributedString<Style: SemanticStringStyleType>(
         for style: Style, environment: Style.Environment) -> NSAttributedString
         where Style.Environment: LocaleEnvironmentType {
-            let commonAttributes = style.getResources(from: environment).textAttributes
-
-            let localeInfo = environment.localeInfo
-
-            let strings = components.map { component in
-                getAttributedString(
-                    component: component,
-                    localeInfo: localeInfo,
-                    getAttributes: { textStyle in style.getResources(from: environment, for: textStyle)?.textAttributes })
-            }
-
-            let resultString = AttributedStringBuilder.build(components: strings, attributes: commonAttributes)
-            return resultString
+            getAttributedString(provider: SemanticStringAttributesProvider(style: style, environment: environment))
     }
 
     private func getAttributedString(
@@ -472,4 +512,16 @@ where Style: SemanticStringStyleType, Style.Environment: LocaleEnvironmentType {
             stringObservable.map { string in string.getAttributedString(for: style, environment: env) }
         }
     }
+}
+
+public func +(lhs: SemanticString, rhs: SemanticString) -> SemanticString {
+    SemanticString(components: lhs.components + rhs.components)
+}
+
+public func +(lhs: SemanticString, rhs: String) -> SemanticString {
+    SemanticString(components: lhs.components + [.init(styles: [], content: .plain(rhs))])
+}
+
+public func +(lhs: String, rhs: SemanticString) -> SemanticString {
+    SemanticString(components: [SemanticString.StringComponent(styles: [], content: .plain(lhs))] + rhs.components)
 }

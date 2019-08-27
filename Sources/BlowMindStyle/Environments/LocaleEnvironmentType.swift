@@ -5,6 +5,20 @@ public protocol LocaleInfoType {
     var locale: Locale { get }
 }
 
+public struct LocaleInfo: LocaleInfoType {
+    public let lprojName: String?
+    public let locale: Locale
+
+    public init(locale: Locale, lprojName: String? = nil) {
+        self.locale = locale
+        self.lprojName = lprojName
+    }
+
+    public static var system: LocaleInfo {
+        LocaleInfo(locale: Locale.current)
+    }
+}
+
 public protocol LocaleEnvironmentType {
     associatedtype LocaleInfo: LocaleInfoType
     var localeInfo: LocaleInfo { get }
