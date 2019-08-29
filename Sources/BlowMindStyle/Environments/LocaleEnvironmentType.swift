@@ -14,6 +14,11 @@ public struct LocaleInfo: LocaleInfoType {
         self.lprojName = lprojName
     }
 
+    public init(_ localeInfo: LocaleInfoType) {
+        self.locale = localeInfo.locale
+        self.lprojName = localeInfo.lprojName
+    }
+
     public static var system: LocaleInfo {
         LocaleInfo(locale: Locale.current)
     }
