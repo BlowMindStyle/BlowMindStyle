@@ -42,7 +42,7 @@ public struct SemanticStringAttributesProvider: SemanticStringAttributesProvider
 }
 
 public struct SemanticString {
-    let components: [StringComponent]
+    public let components: [StringComponent]
 }
 
 extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpolation {
@@ -134,12 +134,12 @@ public extension SemanticString {
 }
 
 extension SemanticString {
-    struct StringComponent {
-        let styles: [TextStyle]
-        let content: Content
+    public struct StringComponent {
+        public let styles: [TextStyle]
+        public let content: Content
     }
 
-    enum Content {
+    public enum Content {
         case plain(String)
         case attributed(NSAttributedString)
         case localizable(StringResourceType, [CVarArg])
