@@ -20,4 +20,12 @@ public extension EnvironmentContext {
     func replacingElement<OtherElement>(_ element: OtherElement) -> EnvironmentContext<OtherElement, Environment> {
         EnvironmentContext<OtherElement, Environment>(element: element, environment: environment)
     }
+
+    func map<T>(_ transform: (Element) -> T) -> EnvironmentContext<T, Environment> {
+        EnvironmentContext<T, Environment>(element: transform(element), environment: environment)
+    }
+
+    func mapEnvironment<T>(_ transform: @escaping (Environment) -> T) -> EnvironmentContext<Element, T> {
+        EnvironmentContext<Element, T>(element: element, environment: environment.map(transform))
+    }
 }
