@@ -5,7 +5,7 @@ public protocol LocaleInfoType {
     var locale: Locale { get }
 }
 
-public struct LocaleInfo: LocaleInfoType {
+public struct LocaleInfo: LocaleInfoType, Hashable {
     public let lprojName: String?
     public let locale: Locale
 
