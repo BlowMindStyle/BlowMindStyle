@@ -28,4 +28,10 @@ public extension EnvironmentContext {
     func mapEnvironment<T>(_ transform: @escaping (Environment) -> T) -> EnvironmentContext<Element, T> {
         EnvironmentContext<Element, T>(element: element, environment: environment.map(transform))
     }
+
+    func unwrapped<T>() -> EnvironmentContext<T, Environment>? where Element == Optional<T> {
+        guard let element = element else { return nil }
+
+        return EnvironmentContext<T, Environment>(element: element, environment: environment)
+    }
 }
