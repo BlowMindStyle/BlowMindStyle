@@ -12,7 +12,7 @@ public extension EnvironmentContext
           Element.Style: TextStyleType,
           Element.Style.Environment == Environment {
 
-    private func _apply(_ style: Element.Style, text: StylizableString<Element.Style>) -> Disposable {
+    func apply(_ style: Element.Style, text: StylizableString<Element.Style>) -> Disposable {
         let environmentAndText = environment
             .flatMapLatest { env -> Observable<(Environment, NSAttributedString)> in
                 text.buildAttributedString(style: style, environment: env).map { (env, $0) }
@@ -28,10 +28,6 @@ public extension EnvironmentContext
                     text: text)
             })
     }
-
-    func apply(_ style: Element.Style, text: StylizableString<Element.Style>) -> Disposable {
-        _apply(style, text: text)
-    }
 }
 
 public extension EnvironmentContext
@@ -40,7 +36,7 @@ public extension EnvironmentContext
           Element.Style: DefaultStyleType,
           Element.Style.Environment == Environment {
 
-    func apply(_ style: Element.Style = .default, text: StylizableString<Element.Style>) -> Disposable {
-        _apply(style, text: text)
+    func apply(text: StylizableString<Element.Style>) -> Disposable {
+        apply(.default, text: text)
     }
 }
