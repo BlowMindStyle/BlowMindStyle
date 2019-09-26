@@ -522,6 +522,39 @@ public func +(lhs: SemanticString, rhs: String) -> SemanticString {
     SemanticString(components: lhs.components + [.init(styles: [], content: .plain(rhs))])
 }
 
+public func +(lhs: SemanticString, rhs: NSAttributedString) -> SemanticString {
+    SemanticString(components: lhs.components + [.init(styles: [], content: .attributed(rhs))])
+}
+
 public func +(lhs: String, rhs: SemanticString) -> SemanticString {
     SemanticString(components: [SemanticString.StringComponent(styles: [], content: .plain(lhs))] + rhs.components)
+}
+
+public func +=(lhs: inout SemanticString, rhs: SemanticString) {
+    lhs = lhs + rhs
+}
+
+public func +=(lhs: inout SemanticString, rhs: String) {
+    lhs = lhs + rhs
+}
+
+public func +=(lhs: inout SemanticString, rhs: NSAttributedString) {
+    lhs = lhs + rhs
+}
+
+public extension Sequence where Element == SemanticString {
+    func joined() -> SemanticString {
+        SemanticString(components: flatMap { $0.components })
+    }
+
+    func joined(separator: SemanticString) -> SemanticString {
+        var iterator = makeIterator()
+        var components = iterator.next()?.components ?? []
+        while let next = iterator.next() {
+            components += separator.components
+            components += next.components
+        }
+
+        return SemanticString(components: components)
+    }
 }
