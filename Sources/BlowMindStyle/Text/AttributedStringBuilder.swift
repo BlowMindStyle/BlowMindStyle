@@ -23,4 +23,13 @@ struct AttributedStringBuilder {
 
         return result
     }
+
+    static func join(components: [NSAttributedString]) -> NSAttributedString {
+        let result = NSMutableAttributedString()
+        for component in components {
+            result.append(component)
+        }
+
+        return result
+    }
 }

@@ -2,42 +2,78 @@ import Foundation
 import RxSwift
 
 public protocol SemanticStringStyleType: TextStyleType {
-    func getResources(from environment: Environment, for textStyle: SemanticString.TextStyle) -> Resources?
+    func setAttributes(
+        for textStyle: SemanticString.TextStyle,
+        attributes: inout [NSAttributedString.Key: Any],
+        surroundingStyles: [SemanticString.TextStyle],
+        environment: Environment
+    )
 }
 
 public protocol SemanticStringAttributesProviderType {
     var localeInfo: LocaleInfoType { get }
-    func getAttributes(for textStyle: SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?
+    func getAttributes() -> [NSAttributedString.Key: Any]
+    func setAttributes(
+        for textStyle: SemanticString.TextStyle,
+        attributes: inout [NSAttributedString.Key: Any],
+        surroundingStyles: [SemanticString.TextStyle]
+    )
 }
 
 public struct SemanticStringAttributesProvider: SemanticStringAttributesProviderType {
 
-    private let _getAttributes: (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?
+    public typealias TextStyle = SemanticString.TextStyle
+    public typealias SetAttributes = (TextStyle, inout [NSAttributedString.Key: Any], [TextStyle]) -> Void
+
+    private let _getAttributes: () -> [NSAttributedString.Key: Any]
+    private let _setAttributes: (SemanticString.TextStyle, inout [NSAttributedString.Key: Any], [SemanticString.TextStyle]) -> Void
     public let localeInfo: LocaleInfoType
 
     public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) where Style.Environment: LocaleEnvironmentType {
         localeInfo = environment.localeInfo
 
-        _getAttributes = { semanticStringStyle in
-            if let semanticStringStyle = semanticStringStyle {
-                return style.getResources(from: environment, for: semanticStringStyle)?.textAttributes
-            } else {
-                return style.getResources(from: environment).textAttributes
-            }
+        _getAttributes = { style.getResources(from: environment).textAttributes }
+        _setAttributes = { textStyle, attributes, otherStyles in
+            style.setAttributes(for: textStyle, attributes: &attributes, surroundingStyles: otherStyles, environment: environment)
         }
+    }
+
+    public init(localeInfo: LocaleInfoType,
+                getAttributes: @escaping () -> [NSAttributedString.Key: Any],
+                setAttributes: @escaping SetAttributes) {
+        self.localeInfo = localeInfo
+        _getAttributes = getAttributes
+        _setAttributes = setAttributes
     }
 
     public init(localeInfo: LocaleInfoType, getAttributes: @escaping (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?) {
         self.localeInfo = localeInfo
-        _getAttributes = getAttributes
+        _getAttributes = { getAttributes(nil) ?? [:] }
+        _setAttributes = { textStyle, attributes, _ in
+            guard let addedAttributes = getAttributes(textStyle) else { return }
+            for (key, value) in addedAttributes {
+                attributes[key] = value
+            }
+        }
     }
 
-    public func getAttributes(for textStyle: SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]? {
-        _getAttributes(textStyle)
+    public func getAttributes() -> [NSAttributedString.Key: Any] {
+        _getAttributes()
+    }
+
+    public func setAttributes(
+        for textStyle: SemanticString.TextStyle,
+        attributes: inout [NSAttributedString.Key: Any],
+        surroundingStyles: [SemanticString.TextStyle]) {
+        _setAttributes(textStyle, &attributes, surroundingStyles)
     }
 
     public static var `default`: SemanticStringAttributesProvider {
-        SemanticStringAttributesProvider(localeInfo: LocaleInfo.system, getAttributes: { _ in nil })
+        SemanticStringAttributesProvider(
+            localeInfo: LocaleInfo.system,
+            getAttributes: { [:] },
+            setAttributes: { _, _, _ in }
+        )
     }
 }
 
@@ -184,7 +220,7 @@ extension SemanticString {
 
 extension SemanticString {
     public func getAttributedString(provider: SemanticStringAttributesProviderType) -> NSAttributedString {
-        let commonAttributes = provider.getAttributes(for: nil) ?? [:]
+        let commonAttributes = provider.getAttributes()
 
         let localeInfo = provider.localeInfo
 
@@ -192,7 +228,8 @@ extension SemanticString {
             getAttributedString(
                 component: component,
                 localeInfo: localeInfo,
-                getAttributes: { textStyle in provider.getAttributes(for: textStyle)  })
+                commonAttributes: commonAttributes,
+                setAttributes: provider.setAttributes(for:attributes:surroundingStyles:))
         }
 
         let resultString = AttributedStringBuilder.build(components: strings, attributes: commonAttributes)
@@ -208,17 +245,21 @@ extension SemanticString {
     private func getAttributedString(
         component: StringComponent,
         localeInfo: LocaleInfoType,
-        getAttributes: (TextStyle) -> [NSAttributedString.Key: Any]?)
+        commonAttributes: [NSAttributedString.Key: Any],
+        setAttributes: (TextStyle, inout [NSAttributedString.Key: Any], [TextStyle]) -> Void)
         -> NSAttributedString {
             let attributedString = getAttributedString(
-                content: component.content, localeInfo: localeInfo, getAttributes: getAttributes)
+                content: component.content,
+                localeInfo: localeInfo,
+                commonAttributes: commonAttributes,
+                setAttributes: setAttributes
+            )
 
-            var attributes: [NSAttributedString.Key: Any] = [:]
+            var attributes = commonAttributes
+            var appliedStyles: [TextStyle] = []
             for style in component.styles {
-                guard let attributesForStyle = getAttributes(style) else { continue }
-                for (key, value) in attributesForStyle {
-                    attributes[key] = value
-                }
+                setAttributes(style, &attributes, appliedStyles)
+                appliedStyles.insert(style, at: 0)
             }
 
             guard !attributes.isEmpty else { return attributedString }
@@ -231,7 +272,8 @@ extension SemanticString {
     private func getAttributedString(
         content: Content,
         localeInfo: LocaleInfoType,
-        getAttributes: (TextStyle) -> [NSAttributedString.Key: Any]?)
+        commonAttributes: [NSAttributedString.Key: Any],
+        setAttributes: (TextStyle, inout [NSAttributedString.Key: Any], [TextStyle]) -> Void)
         -> NSAttributedString {
 
             switch content {
@@ -249,7 +291,12 @@ extension SemanticString {
             case let .dynamic(provider):
                 let semanticString = provider(localeInfo)
                 let strings = semanticString.components.map { component in
-                    getAttributedString(component: component, localeInfo: localeInfo, getAttributes: getAttributes)
+                    getAttributedString(
+                        component: component,
+                        localeInfo: localeInfo,
+                        commonAttributes: commonAttributes,
+                        setAttributes: setAttributes
+                    )
                 }
 
                 return AttributedStringBuilder.build(components: strings, attributes: [:])
