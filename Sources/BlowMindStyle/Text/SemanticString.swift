@@ -57,20 +57,20 @@ extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpo
             components.append(.init(styles: [], content: .plain(literal)))
         }
 
-        public mutating func appendInterpolation(resource: StringResourceType, args: CVarArg...) {
-            components.append(.init(styles: [], content: .localizable(resource, args)))
+        public mutating func appendInterpolation(resource: StringResourceType, args: CVarArg..., styles: [TextStyle] = []) {
+            components.append(.init(styles: styles, content: .localizable(resource, args)))
         }
 
-        public mutating func appendInterpolation(resource: StringResourceType, argsArray: [CVarArg]) {
-            components.append(.init(styles: [], content: .localizable(resource, argsArray)))
+        public mutating func appendInterpolation(resource: StringResourceType, argsArray: [CVarArg], styles: [TextStyle] = []) {
+            components.append(.init(styles: styles, content: .localizable(resource, argsArray)))
         }
 
         public mutating func appendInterpolation(_ string: SemanticString) {
             components.append(contentsOf: string.components)
         }
 
-        public mutating func appendInterpolation(_ string: NSAttributedString) {
-            components.append(.init(styles: [], content: .attributed(string)))
+        public mutating func appendInterpolation(_ string: NSAttributedString, styles: [TextStyle] = []) {
+            components.append(.init(styles: styles, content: .attributed(string)))
         }
 
         public mutating func appendInterpolation(style: TextStyle, _ string: SemanticString) {
@@ -85,8 +85,12 @@ extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpo
             }
         }
 
-        public mutating func appendInterpolation<Value: CustomStringConvertible>(_ value: Value) {
-            components.append(.init(styles: [], content: .plain(value.description)))
+        public mutating func appendInterpolation<Value: CustomStringConvertible>(_ value: Value, styles: [TextStyle] = []) {
+            components.append(.init(styles: styles, content: .plain(value.description)))
+        }
+
+        public mutating func appendInterpolation(dynamic provider: @escaping (LocaleInfoType) -> SemanticString, styles: [TextStyle] = []) {
+            components.append(.init(styles: styles, content: .dynamic(provider)))
         }
     }
 
