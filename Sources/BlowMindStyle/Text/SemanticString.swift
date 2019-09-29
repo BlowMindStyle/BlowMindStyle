@@ -485,35 +485,6 @@ private extension SemanticString.FlatStringComponent {
     }
 }
 
-public extension StylizableString where Style: SemanticStringStyleType, Style.Environment: LocaleEnvironmentType {
-    init(semantic string: SemanticString) {
-        self.init(builder: { style, env in
-            .just(string.getAttributedString(for: style, environment: env))
-        })
-    }
-
-    init<O: ObservableType>(semantic stringObservable: O) where O.E == SemanticString {
-        self.init(builder: { style, env in
-            stringObservable.map { string in string.getAttributedString(for: style, environment: env) }
-        })
-    }
-}
-
-public extension StylizableString.StringInterpolation
-where Style: SemanticStringStyleType, Style.Environment: LocaleEnvironmentType {
-    mutating func appendInterpolation(semantic string: SemanticString) {
-        appendBuilder { style, env in
-            .just(string.getAttributedString(for: style, environment: env))
-        }
-    }
-
-    mutating func appendInterpolation<O: ObservableType>(semantic stringObservable: O) where O.E == SemanticString {
-        appendBuilder { style, env in
-            stringObservable.map { string in string.getAttributedString(for: style, environment: env) }
-        }
-    }
-}
-
 public func +(lhs: SemanticString, rhs: SemanticString) -> SemanticString {
     SemanticString(components: lhs.components + rhs.components)
 }
