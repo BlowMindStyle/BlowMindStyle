@@ -20,6 +20,24 @@ public extension EnvironmentContext
                     isInitialApply: index == 0)
             })
     }
+
+    func apply<ObservableState: ObservableConvertibleType, State>(
+        forState state: ObservableState,
+        _ styleSelector: @escaping (State) -> Element.Style)
+        -> Disposable
+        where ObservableState.E == State {
+            Observable
+                .combineLatest(environment, state.asObservable())
+                .enumerated()
+                .subscribe(onNext: { [element = self.element] (index, tuple) in
+                    let (env, state) = tuple
+                    let style = styleSelector(state)
+                    element.apply(
+                        style: style,
+                        resources: style.getResources(from: env),
+                        isInitialApply: index == 0)
+                })
+    }
 }
 
 public extension EnvironmentContext
