@@ -28,8 +28,8 @@ internal extension SemanticString {
                     return .attributed(transformAttributedString(string))
 
                 case let .localizable(resource, args):
-                    return .dynamic { localeInfo in
-                        let format = localeInfo.localize(resource)
+                    return .dynamic { locale in
+                        let format = resource.localize(with: locale)
                         let string = transformString(String(format: format, arguments: args))
                         return SemanticString(string: string)
                     }
@@ -52,7 +52,6 @@ internal extension SemanticString.StringComponent {
         .init(styles: styles, content: transform(content))
     }
 }
-
 
 internal extension NSAttributedString {
     func uppercased() -> NSAttributedString {

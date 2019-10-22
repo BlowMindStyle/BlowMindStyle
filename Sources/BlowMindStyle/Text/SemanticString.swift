@@ -11,7 +11,7 @@ public protocol SemanticStringStyleType: TextStyleType {
 }
 
 public protocol SemanticStringAttributesProviderType {
-    var localeInfo: LocaleInfoType { get }
+    var locale: Locale { get }
     func getAttributes() -> [NSAttributedString.Key: Any]
     func setAttributes(
         for textStyle: SemanticString.TextStyle,
@@ -27,10 +27,10 @@ public struct SemanticStringAttributesProvider: SemanticStringAttributesProvider
 
     private let _getAttributes: () -> [NSAttributedString.Key: Any]
     private let _setAttributes: (SemanticString.TextStyle, inout [NSAttributedString.Key: Any], [SemanticString.TextStyle]) -> Void
-    public let localeInfo: LocaleInfoType
+    public let locale: Locale
 
     public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) where Style.Environment: LocaleEnvironmentType {
-        localeInfo = environment.localeInfo
+        locale = environment.locale
 
         _getAttributes = { style.getResources(from: environment).textAttributes }
         _setAttributes = { textStyle, attributes, otherStyles in
@@ -38,16 +38,16 @@ public struct SemanticStringAttributesProvider: SemanticStringAttributesProvider
         }
     }
 
-    public init(localeInfo: LocaleInfoType,
+    public init(locale: Locale,
                 getAttributes: @escaping () -> [NSAttributedString.Key: Any],
                 setAttributes: @escaping SetAttributes) {
-        self.localeInfo = localeInfo
+        self.locale = locale
         _getAttributes = getAttributes
         _setAttributes = setAttributes
     }
 
-    public init(localeInfo: LocaleInfoType, getAttributes: @escaping (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?) {
-        self.localeInfo = localeInfo
+    public init(locale: Locale, getAttributes: @escaping (SemanticString.TextStyle?) -> [NSAttributedString.Key: Any]?) {
+        self.locale = locale
         _getAttributes = { getAttributes(nil) ?? [:] }
         _setAttributes = { textStyle, attributes, _ in
             guard let addedAttributes = getAttributes(textStyle) else { return }
@@ -70,7 +70,7 @@ public struct SemanticStringAttributesProvider: SemanticStringAttributesProvider
 
     public static var `default`: SemanticStringAttributesProvider {
         SemanticStringAttributesProvider(
-            localeInfo: LocaleInfo.system,
+            locale: Locale.current,
             getAttributes: { [:] },
             setAttributes: { _, _, _ in }
         )
@@ -125,7 +125,7 @@ extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpo
             components.append(.init(styles: styles, content: .plain(value.description)))
         }
 
-        public mutating func appendInterpolation(dynamic provider: @escaping (LocaleInfoType) -> SemanticString, styles: [TextStyle] = []) {
+        public mutating func appendInterpolation(dynamic provider: @escaping (Locale) -> SemanticString, styles: [TextStyle] = []) {
             components.append(.init(styles: styles, content: .dynamic(provider)))
         }
     }
@@ -154,7 +154,7 @@ extension SemanticString: ExpressibleByStringLiteral, ExpressibleByStringInterpo
         components = [.init(styles: [], content: .plain(string))]
     }
 
-    public init(dynamic provider: @escaping (LocaleInfoType) -> SemanticString, styles: [TextStyle] = []) {
+    public init(dynamic provider: @escaping (Locale) -> SemanticString, styles: [TextStyle] = []) {
         components = [.init(styles: styles, content: .dynamic(provider))]
     }
 
@@ -183,24 +183,20 @@ extension SemanticString {
         case plain(String)
         case attributed(NSAttributedString)
         case localizable(StringResourceType, [CVarArg])
-        case dynamic((LocaleInfoType) -> SemanticString)
+        case dynamic((Locale) -> SemanticString)
     }
 }
 
 extension SemanticString {
-    public func getString(_ localeInfo: LocaleInfoType) -> String {
+    public func getString(_ locale: Locale = Locale.current) -> String {
         let strings = components.map { component in
-            getString(component: component, localeInfo: localeInfo)
+            getString(component: component, locale: locale)
         }
 
         return strings.joined()
     }
 
-    public func getString() -> String {
-        return getString(DefaultLocaleInfo())
-    }
-
-    private func getString(component: StringComponent, localeInfo: LocaleInfoType) -> String {
+    private func getString(component: StringComponent, locale: Locale) -> String {
         switch component.content {
         case let .plain(string):
             return string
@@ -209,11 +205,11 @@ extension SemanticString {
             return attributedString.string
 
         case let .localizable(resource, args):
-            let format = localeInfo.localize(resource)
+            let format = resource.localize(with: locale)
             return String(format: format, arguments: args)
 
         case let .dynamic(provider):
-            return provider(localeInfo).getString(localeInfo)
+            return provider(locale).getString(locale)
         }
     }
 }
@@ -222,12 +218,12 @@ extension SemanticString {
     public func getAttributedString(provider: SemanticStringAttributesProviderType) -> NSAttributedString {
         let commonAttributes = provider.getAttributes()
 
-        let localeInfo = provider.localeInfo
+        let locale = provider.locale
 
         let strings = components.map { component in
             getAttributedString(
                 component: component,
-                localeInfo: localeInfo,
+                locale: locale,
                 commonAttributes: commonAttributes,
                 setAttributes: provider.setAttributes(for:attributes:surroundingStyles:))
         }
@@ -244,13 +240,13 @@ extension SemanticString {
 
     private func getAttributedString(
         component: StringComponent,
-        localeInfo: LocaleInfoType,
+        locale: Locale,
         commonAttributes: [NSAttributedString.Key: Any],
         setAttributes: (TextStyle, inout [NSAttributedString.Key: Any], [TextStyle]) -> Void)
         -> NSAttributedString {
             let attributedString = getAttributedString(
                 content: component.content,
-                localeInfo: localeInfo,
+                locale: locale,
                 commonAttributes: commonAttributes,
                 setAttributes: setAttributes
             )
@@ -271,7 +267,7 @@ extension SemanticString {
 
     private func getAttributedString(
         content: Content,
-        localeInfo: LocaleInfoType,
+        locale: Locale,
         commonAttributes: [NSAttributedString.Key: Any],
         setAttributes: (TextStyle, inout [NSAttributedString.Key: Any], [TextStyle]) -> Void)
         -> NSAttributedString {
@@ -284,16 +280,16 @@ extension SemanticString {
                 return string
 
             case let .localizable(resource, args):
-                let format = localeInfo.localize(resource)
+                let format = resource.localize(with: locale)
                 let string = String(format: format, arguments: args)
                 return NSAttributedString(string: string)
 
             case let .dynamic(provider):
-                let semanticString = provider(localeInfo)
+                let semanticString = provider(locale)
                 let strings = semanticString.components.map { component in
                     getAttributedString(
                         component: component,
-                        localeInfo: localeInfo,
+                        locale: locale,
                         commonAttributes: commonAttributes,
                         setAttributes: setAttributes
                     )
@@ -306,15 +302,15 @@ extension SemanticString {
 
 public extension SemanticString {
     init(xml string: SemanticString) {
-        let content: Content = .dynamic { localeInfo in
-            SemanticString.parseXmlSemanticString(string, localeInfo: localeInfo)
+        let content: Content = .dynamic { locale in
+            SemanticString.parseXmlSemanticString(string, locale: locale)
         }
 
         self.components = [StringComponent(styles: [], content: content)]
     }
 
-    private static func parseXmlSemanticString(_ semanticString: SemanticString, localeInfo: LocaleInfoType) -> SemanticString {
-        let flatStringComponents = semanticString.components.flatMap { $0.mapToFlatStringComponent(localeInfo: localeInfo) }
+    private static func parseXmlSemanticString(_ semanticString: SemanticString, locale: Locale) -> SemanticString {
+        let flatStringComponents = semanticString.components.flatMap { $0.mapToFlatStringComponent(locale: locale) }
         let tagMatches = flatStringComponents.enumerated()
             .flatMap { (index, component) in component.content.getTags(componentIndex: index) }
 
@@ -384,7 +380,7 @@ private extension SemanticString {
 }
 
 private extension SemanticString.StringComponent {
-    func mapToFlatStringComponent(localeInfo: LocaleInfoType) -> [SemanticString.FlatStringComponent] {
+    func mapToFlatStringComponent(locale: Locale) -> [SemanticString.FlatStringComponent] {
         let content: SemanticString.FlatContent
         switch self.content {
         case let .plain(string):
@@ -394,12 +390,12 @@ private extension SemanticString.StringComponent {
             content = .attributed(string)
 
         case let .localizable(resource, args):
-            let format = localeInfo.localize(resource)
+            let format = resource.localize(with: locale)
             content = .plain(String(format: format, arguments: args))
 
         case let .dynamic(provider):
-            let components = provider(localeInfo).components
-            var flatComponents = components.flatMap { component in component.mapToFlatStringComponent(localeInfo: localeInfo) }
+            let components = provider(locale).components
+            var flatComponents = components.flatMap { component in component.mapToFlatStringComponent(locale: locale) }
             for index in flatComponents.startIndex..<flatComponents.endIndex {
                 flatComponents[index].styles = styles + flatComponents[index].styles
             }
