@@ -30,7 +30,7 @@ public extension EnvironmentContext
             })
     }
 
-    func apply<O: ObservableConvertibleType>(_ style: Element.Style, text: O) -> Disposable where O.E == SemanticString {
+    func apply<O: ObservableConvertibleType>(_ style: Element.Style, text: O) -> Disposable where O.Element == SemanticString {
         let environmentAndText = Observable.combineLatest(environment, text.asObservable())
             .map { env, text -> (Environment, NSAttributedString) in
                 (env, text.getAttributedString(for: style, environment: env))
@@ -59,7 +59,7 @@ public extension EnvironmentContext
         apply(.default, text: text)
     }
 
-    func apply<O: ObservableConvertibleType>(text: O) -> Disposable where O.E == SemanticString  {
+    func apply<O: ObservableConvertibleType>(text: O) -> Disposable where O.Element == SemanticString  {
         apply(.default, text: text)
     }
 }

@@ -4,23 +4,13 @@ import RxCocoa
 
 public protocol TraitCollectionEnvironmentType {
     var traitCollection: UITraitCollection { get }
-    var previousTraitCollection: UITraitCollection? { get }
 }
 
 public struct TraitCollectionEnvironment: TraitCollectionEnvironmentType {
     public let traitCollection: UITraitCollection
-    public let previousTraitCollection: UITraitCollection?
 
-    public init(traitCollection: UITraitCollection,
-                previousTraitCollection: UITraitCollection?) {
+    public init(traitCollection: UITraitCollection) {
         self.traitCollection = traitCollection
-        self.previousTraitCollection = previousTraitCollection
-    }
-}
-
-public extension TraitCollectionEnvironmentType {
-    func changed<Property: Equatable>(_ keyPath: KeyPath<UITraitCollection, Property>) -> Bool {
-        traitCollection[keyPath: keyPath] != previousTraitCollection?[keyPath: keyPath]
     }
 }
 
@@ -35,40 +25,13 @@ public extension UITraitEnvironment where Self: NSObject {
 
             return self.rx
                 .methodInvoked(#selector(UITraitEnvironment.traitCollectionDidChange))
-                .map { [unowned self] args -> TraitCollectionEnvironment in
-                    TraitCollectionEnvironment(
-                        traitCollection: self.traitCollection,
-                        previousTraitCollection: args[0] as? UITraitCollection)
+                .map { [unowned self] args in
+                    TraitCollectionEnvironment(traitCollection: self.traitCollection)
             }
-            .startWith(.init(traitCollection: self.traitCollection, previousTraitCollection: nil))
+            .startWith(.init(traitCollection: self.traitCollection))
         }
     }
 }
 
 extension UIViewController: TraitCollectionProviderType { }
 extension UIView: TraitCollectionProviderType { }
-
-@available(iOS 13, *)
-public extension TraitCollectionEnvironmentType {
-    var styleChanged: Bool {
-        changed(\.userInterfaceStyle)
-    }
-
-    var levelChanged: Bool {
-        changed(\.userInterfaceLevel)
-    }
-}
-
-public extension TraitCollectionEnvironmentType {
-    var horizontalSizeChanged: Bool {
-        changed(\.horizontalSizeClass)
-    }
-
-    var verticalSizeChanged: Bool {
-        changed(\.verticalSizeClass)
-    }
-
-    var sizeChanged: Bool {
-        horizontalSizeChanged || verticalSizeChanged
-    }
-}

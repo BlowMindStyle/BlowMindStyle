@@ -3,7 +3,7 @@ import RxSwift
 public protocol StylizableElement {
     associatedtype Style: StyleType
 
-    func apply(style: Style, resources: Style.Resources, isInitialApply: Bool)
+    func apply(style: Style, resources: Style.Resources)
 }
 
 public extension EnvironmentContext
@@ -12,12 +12,12 @@ public extension EnvironmentContext
           Element.Style.Environment == Environment {
 
     func apply(_ style: Element.Style) -> Disposable {
-        environment.enumerated()
-            .subscribe(onNext: { [element = self.element] (index, env) in
+        style.filteredEnvironment(environment)
+            .subscribe(onNext: { [element = self.element] env in
                 element.apply(
                     style: style,
-                    resources: style.getResources(from: env),
-                    isInitialApply: index == 0)
+                    resources: style.getResources(from: env)
+                )
             })
     }
 
@@ -25,18 +25,15 @@ public extension EnvironmentContext
         forState state: ObservableState,
         _ styleSelector: @escaping (State) -> Element.Style)
         -> Disposable
-        where ObservableState.E == State {
-            Observable
-                .combineLatest(environment, state.asObservable())
-                .enumerated()
-                .subscribe(onNext: { [element = self.element] (index, tuple) in
-                    let (env, state) = tuple
+        where ObservableState.Element == State {
+            state.asObservable()
+                .flatMapLatest { [environment] state -> Observable<(Element.Style, Environment)> in
                     let style = styleSelector(state)
-                    element.apply(
-                        style: style,
-                        resources: style.getResources(from: env),
-                        isInitialApply: index == 0)
-                })
+                    return style.filteredEnvironment(environment).map { (style, $0) }
+            }
+            .subscribe(onNext: { [element = self.element] (style, env) in
+                element.apply(style: style, resources: style.getResources(from: env))
+            })
     }
 }
 
