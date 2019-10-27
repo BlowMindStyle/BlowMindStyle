@@ -7,7 +7,7 @@ final class BlowMindStyleTests: XCTestCase {
 
         let environment = MockEnvironment()
 
-        let plainString = semanticString.getString(environment.localeInfo)
+        let plainString = semanticString.getString(environment.locale)
         XCTAssertEqual(plainString, "hello world!")
 
         var style = MockSemanticStringStyle()
@@ -26,7 +26,7 @@ final class BlowMindStyleTests: XCTestCase {
 
         let environment = MockEnvironment()
 
-        let plainString = semanticString.getString(environment.localeInfo)
+        let plainString = semanticString.getString(environment.locale)
         XCTAssertEqual(plainString, "Lorem ipsum dolor sit amet")
 
         var style = MockSemanticStringStyle()
@@ -48,7 +48,7 @@ final class BlowMindStyleTests: XCTestCase {
 
         let environment = MockEnvironment()
 
-        let plainString = semanticString.getString(environment.localeInfo)
+        let plainString = semanticString.getString(environment.locale)
         XCTAssertEqual(plainString, "Lorem ipsum dolor sit amet")
 
         var style = MockSemanticStringStyle()

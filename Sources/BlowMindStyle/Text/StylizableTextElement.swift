@@ -10,8 +10,7 @@ public protocol StylizableTextElement {
 public extension EnvironmentContext
     where Element: StylizableTextElement,
           Element.Style: SemanticStringStyleType,
-          Element.Style.Environment == Environment,
-          Environment: LocaleEnvironmentType {
+          Element.Style.Environment == Environment {
 
     func apply(_ style: Element.Style, text: SemanticString) -> Disposable {
         let environmentAndText = environment
@@ -52,8 +51,7 @@ public extension EnvironmentContext
     where Element: StylizableTextElement,
           Element.Style: SemanticStringStyleType,
           Element.Style: DefaultStyleType,
-          Element.Style.Environment == Environment,
-          Environment: LocaleEnvironmentType {
+          Element.Style.Environment == Environment {
 
     func apply(text: SemanticString) -> Disposable {
         apply(.default, text: text)

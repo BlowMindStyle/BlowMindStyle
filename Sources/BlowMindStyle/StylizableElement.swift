@@ -6,6 +6,8 @@ public protocol StylizableElement {
     func apply(style: Style, resources: Style.Resources)
 }
 
+public struct StylizableElements { }
+
 public extension EnvironmentContext
     where Element: StylizableElement,
           Element.Style: EnvironmentStyleType,

@@ -29,7 +29,7 @@ public struct SemanticStringAttributesProvider: SemanticStringAttributesProvider
     private let _setAttributes: (SemanticString.TextStyle, inout [NSAttributedString.Key: Any], [SemanticString.TextStyle]) -> Void
     public let locale: Locale
 
-    public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) where Style.Environment: LocaleEnvironmentType {
+    public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) {
         locale = environment.locale
 
         _getAttributes = { style.getResources(from: environment).textAttributes }
@@ -233,9 +233,8 @@ extension SemanticString {
     }
 
     public func getAttributedString<Style: SemanticStringStyleType>(
-        for style: Style, environment: Style.Environment) -> NSAttributedString
-        where Style.Environment: LocaleEnvironmentType {
-            getAttributedString(provider: SemanticStringAttributesProvider(style: style, environment: environment))
+        for style: Style, environment: Style.Environment) -> NSAttributedString {
+        getAttributedString(provider: SemanticStringAttributesProvider(style: style, environment: environment))
     }
 
     private func getAttributedString(
