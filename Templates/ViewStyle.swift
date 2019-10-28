@@ -12,13 +12,13 @@ public struct <#Component#>Style<Environment: StyleEnvironmentType>: Environment
     public init(getResources: @escaping (Environment) -> Resources) {
         self._getResources = getResources
     }
-    
+
     public func getResources(from environment: Environment) -> Resources {
         _getResources(environment)
     }
 
     public func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
-        EnvironmentChange.UserInterfaceStyle.needUpdate(arg)
+        EnvironmentChange.ThemeOrUserInterfaceStyle.needUpdate(arg)
     }
 }
 

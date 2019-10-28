@@ -22,7 +22,7 @@ public struct <#Component#>Style<Environment: StyleEnvironmentType>: Environment
     }
 
     public func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
-        EnvironmentChange.UserInterfaceStyle.needUpdate(arg)
+        EnvironmentChange.ThemeOrUserInterfaceStyle.needUpdate(arg)
     }
 }
 
