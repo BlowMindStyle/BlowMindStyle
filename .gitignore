@@ -5,3 +5,5 @@
 .swiftpm
 Package.resolved
 xcuserdata/
+*.generated.swift
+Pods/
