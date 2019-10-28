@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		705FCF99E2C36515BEE13A35 /* Pods_Starter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 816A654372C904EB9BB6DB1A /* Pods_Starter.framework */; };
+		EE0875772366EFD100879A4C /* BlowMindStyle in Frameworks */ = {isa = PBXBuildFile; productRef = EE0875762366EFD100879A4C /* BlowMindStyle */; };
 		EE2E09822366D7F000F8EBE6 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2E09812366D7F000F8EBE6 /* R.generated.swift */; };
 		EE3DCBC623661FBC003B4607 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBC523661FBC003B4607 /* AppDelegate.swift */; };
 		EE3DCBCF23661FBC003B4607 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE3DCBCE23661FBC003B4607 /* Assets.xcassets */; };
 		EE3DCBD223661FBC003B4607 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE3DCBD023661FBC003B4607 /* LaunchScreen.storyboard */; };
 		EE3DCBDF23662118003B4607 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EE3DCBDE23662118003B4607 /* SnapKit */; };
-		EE3DCBE223662121003B4607 /* BlowMindStyle in Frameworks */ = {isa = PBXBuildFile; productRef = EE3DCBE123662121003B4607 /* BlowMindStyle */; };
 		EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */; };
 		EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */; };
 		EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE623662192003B4607 /* Subscription.swift */; };
@@ -25,13 +25,13 @@
 		816A654372C904EB9BB6DB1A /* Pods_Starter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Starter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1EDEF5586D69689E7176D35 /* Pods-Starter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Starter.debug.xcconfig"; path = "Target Support Files/Pods-Starter/Pods-Starter.debug.xcconfig"; sourceTree = "<group>"; };
 		ABFC1316A16527BC4EEB1A7E /* Pods-Starter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Starter.release.xcconfig"; path = "Target Support Files/Pods-Starter/Pods-Starter.release.xcconfig"; sourceTree = "<group>"; };
+		EE0875752366EFBD00879A4C /* BlowMindStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = BlowMindStyle; sourceTree = "<group>"; };
 		EE2E09812366D7F000F8EBE6 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = SOURCE_ROOT; };
 		EE3DCBC223661FBC003B4607 /* Starter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Starter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE3DCBC523661FBC003B4607 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EE3DCBCE23661FBC003B4607 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EE3DCBD123661FBC003B4607 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE3DCBD323661FBC003B4607 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EE3DCBDC236620D9003B4607 /* BlowMindStyle */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BlowMindStyle; path = ..; sourceTree = "<group>"; };
 		EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		EE3DCBE623662192003B4607 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE3DCBE223662121003B4607 /* BlowMindStyle in Frameworks */,
+				EE0875772366EFD100879A4C /* BlowMindStyle in Frameworks */,
 				EE3DCBDF23662118003B4607 /* SnapKit in Frameworks */,
 				705FCF99E2C36515BEE13A35 /* Pods_Starter.framework in Frameworks */,
 			);
@@ -77,7 +77,7 @@
 				EEA594CD2366CB5B00BD6C5C /* Podfile */,
 				EE3DCBC423661FBC003B4607 /* Starter */,
 				EE3DCBC323661FBC003B4607 /* Products */,
-				EE3DCBDC236620D9003B4607 /* BlowMindStyle */,
+				EE0875752366EFBD00879A4C /* BlowMindStyle */,
 				EE3DCBE023662121003B4607 /* Frameworks */,
 				5F943D5582F03C40E1A827FF /* Pods */,
 			);
@@ -145,7 +145,7 @@
 			name = Starter;
 			packageProductDependencies = (
 				EE3DCBDE23662118003B4607 /* SnapKit */,
-				EE3DCBE123662121003B4607 /* BlowMindStyle */,
+				EE0875762366EFD100879A4C /* BlowMindStyle */,
 			);
 			productName = Starter;
 			productReference = EE3DCBC223661FBC003B4607 /* Starter.app */;
@@ -476,14 +476,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EE0875762366EFD100879A4C /* BlowMindStyle */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BlowMindStyle;
+		};
 		EE3DCBDE23662118003B4607 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EE3DCBDD23662118003B4607 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		EE3DCBE123662121003B4607 /* BlowMindStyle */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BlowMindStyle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
