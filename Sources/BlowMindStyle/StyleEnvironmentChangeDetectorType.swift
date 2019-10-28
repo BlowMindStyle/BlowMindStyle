@@ -28,13 +28,13 @@ public struct EnvironmentChange {
         }
     }
 
-    public struct Theme<Environment: StyleEnvironmentType>: StyleEnvironmentChangeDetectorType where Environment.Theme: Equatable {
+    public struct Theme<Environment: StyleEnvironmentType>: StyleEnvironmentChangeDetectorType {
         public static func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
             arg.propertyChanged(\.theme)
         }
     }
 
-    public struct ThemeOrUserInterfaceStyle<Environment: StyleEnvironmentType>: StyleEnvironmentChangeDetectorType where Environment.Theme: Equatable {
+    public struct ThemeOrUserInterfaceStyle<Environment: StyleEnvironmentType>: StyleEnvironmentChangeDetectorType {
         public static func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
             Theme.needUpdate(arg) || UserInterfaceStyle.needUpdate(arg)
         }
