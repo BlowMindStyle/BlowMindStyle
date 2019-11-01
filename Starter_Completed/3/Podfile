@@ -1,0 +1,7 @@
+platform :ios, '11'
+
+use_frameworks!
+
+target 'Starter' do
+    pod 'R.swift', '~> 5'
+end

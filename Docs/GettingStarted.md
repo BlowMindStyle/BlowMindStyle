@@ -4,8 +4,7 @@
 1. [Create your own style](Part1_createYourOwnStyle.md)
 2. [Create A theme](Part2_createATheme.md)
 3. [Switch styles according to state](Part3_switchStyles.md)
-
-## 4. Text stylization
+4. [Text stylization](Part4_textStylization.md)
 
 ## 5. Handling preferred content size category update
 
