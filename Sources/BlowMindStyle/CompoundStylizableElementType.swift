@@ -6,40 +6,46 @@ public protocol CompoundStylizableElementType: class {
 
     typealias Context = EnvironmentContext<Self, Environment>
 
-    func applyStylesToChildComponents(_ context: Context) -> Disposable
+    func applyStylesToChildComponents(_ context: Context)
 }
 
 public extension CompoundStylizableElementType {
-    func applyStyles(for environment: Observable<Environment>) -> Disposable {
-        applyStylesToChildComponents(.init(element: self, environment: environment))
+    func applyStyles<ObservableEnvironment: ObservableConvertibleType>(for environment: ObservableEnvironment)
+        -> Disposable where ObservableEnvironment.Element == Environment {
+            var subscriptions: [Disposable] = []
+            let context = EnvironmentContext(element: self, environment: environment.asObservable(), appendSubscription: { subscriptions.append($0) })
+            applyStylesToChildComponents(context)
+            return Disposables.create(subscriptions)
     }
 }
 
 public extension CompoundStylizableElementType where Self: StyleSubscriptionOwnerType {
-    func applyStyles(for environment: Observable<Self.Environment>) {
-        setStyleSubscription(applyStyles(for: environment))
+    func applyStyles<ObservableEnvironment: ObservableConvertibleType>(for environment: ObservableEnvironment)
+        where ObservableEnvironment.Element == Environment {
+            setStyleSubscription(applyStyles(for: environment))
     }
 }
 
 public extension EnvironmentContext where Element: CompoundStylizableElementType, Element.Environment == Environment {
-    func applyStyles() -> Disposable {
-        element.applyStyles(for: environment)
+    func applyStyles() {
+        appendSubscription(element.applyStyles(for: environment))
     }
 }
 
 public extension CompoundStylizableElementType where Self: UIViewController, Self: StyleSubscriptionOwnerType {
-    func applyStylesOnLoad(for environment: Observable<Self.Environment>) {
-        if viewIfLoaded != nil {
-            applyStyles(for: environment)
-        } else {
-            let loaded = rx.methodInvoked(#selector(UIViewController.viewDidLoad)).take(1)
+    func applyStylesOnLoad<ObservableEnvironment: ObservableConvertibleType>(for environment: ObservableEnvironment)
+        where ObservableEnvironment.Element == Environment{
+            if viewIfLoaded != nil {
+                applyStyles(for: environment)
+            } else {
+                let loaded = rx.methodInvoked(#selector(UIViewController.viewDidLoad)).take(1)
 
-            let subscription = loaded
-                .subscribe(onNext: { [weak self] _ in
-                    self?.applyStyles(for: environment)
-                })
+                let subscription = loaded
+                    .subscribe(onNext: { [weak self] _ in
+                        self?.applyStyles(for: environment)
+                    })
 
-            setStyleSubscription(subscription)
-        }
+                setStyleSubscription(subscription)
+            }
     }
 }

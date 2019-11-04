@@ -11,22 +11,22 @@ public extension EnvironmentContext
           Element.Style: EnvironmentStyleType,
           Element.Style.Environment == Environment {
 
-    func apply(_ style: Element.Style) -> Disposable {
-        environment.enumerated()
+    func apply(_ style: Element.Style) {
+        appendSubscription(environment.enumerated()
             .subscribe(onNext: { [element = self.element] (index, env) in
                 element.apply(
                     style: style,
                     resources: style.getResources(from: env),
                     isInitialApply: index == 0)
             })
+        )
     }
 
     func apply<ObservableState: ObservableConvertibleType, State>(
         forState state: ObservableState,
         _ styleSelector: @escaping (State) -> Element.Style)
-        -> Disposable
-        where ObservableState.E == State {
-            Observable
+        where ObservableState.Element == State {
+            appendSubscription(Observable
                 .combineLatest(environment, state.asObservable())
                 .enumerated()
                 .subscribe(onNext: { [element = self.element] (index, tuple) in
@@ -37,6 +37,7 @@ public extension EnvironmentContext
                         resources: style.getResources(from: env),
                         isInitialApply: index == 0)
                 })
+            )
     }
 }
 
@@ -46,7 +47,7 @@ public extension EnvironmentContext
           Element.Style: DefaultStyleType,
           Element.Style.Environment == Environment {
 
-    func apply() -> Disposable {
+    func apply() {
         apply(.default)
     }
 }

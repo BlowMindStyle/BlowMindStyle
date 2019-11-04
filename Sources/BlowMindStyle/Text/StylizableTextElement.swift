@@ -13,13 +13,13 @@ public extension EnvironmentContext
           Element.Style.Environment == Environment,
           Environment: LocaleEnvironmentType {
 
-    func apply(_ style: Element.Style, text: SemanticString) -> Disposable {
+    func apply(_ style: Element.Style, text: SemanticString) {
         let environmentAndText = environment
             .map { env -> (Environment, NSAttributedString) in
                 (env, text.getAttributedString(for: style, environment: env))
         }
 
-        return environmentAndText.enumerated()
+        appendSubscription(environmentAndText.enumerated()
             .subscribe(onNext: { [element = self.element] (index, tuple) in
                 let (env, text) = tuple
                 return element.apply(
@@ -28,15 +28,16 @@ public extension EnvironmentContext
                     isInitialApply: index == 0,
                     text: text)
             })
+        )
     }
 
-    func apply<O: ObservableConvertibleType>(_ style: Element.Style, text: O) -> Disposable where O.E == SemanticString {
+    func apply<O: ObservableConvertibleType>(_ style: Element.Style, text: O) where O.Element == SemanticString {
         let environmentAndText = Observable.combineLatest(environment, text.asObservable())
             .map { env, text -> (Environment, NSAttributedString) in
                 (env, text.getAttributedString(for: style, environment: env))
         }
 
-        return environmentAndText.enumerated()
+        appendSubscription(environmentAndText.enumerated()
             .subscribe(onNext: { [element = self.element] (index, tuple) in
                 let (env, text) = tuple
                 return element.apply(
@@ -45,6 +46,7 @@ public extension EnvironmentContext
                     isInitialApply: index == 0,
                     text: text)
             })
+        )
     }
 }
 
@@ -55,11 +57,11 @@ public extension EnvironmentContext
           Element.Style.Environment == Environment,
           Environment: LocaleEnvironmentType {
 
-    func apply(text: SemanticString) -> Disposable {
+    func apply(text: SemanticString) {
         apply(.default, text: text)
     }
 
-    func apply<O: ObservableConvertibleType>(text: O) -> Disposable where O.E == SemanticString  {
+    func apply<O: ObservableConvertibleType>(text: O) where O.Element == SemanticString  {
         apply(.default, text: text)
     }
 }

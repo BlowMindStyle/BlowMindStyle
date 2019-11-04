@@ -7,12 +7,15 @@ public protocol ParametrizedCompoundStylizableElementType: class {
 
     typealias Context = EnvironmentContext<Self, Environment>
 
-    func applyStylesToChildComponents(_ context: Context, arg: Argument) -> Disposable
+    func applyStylesToChildComponents(_ context: Context, arg: Argument)
 }
 
 public extension ParametrizedCompoundStylizableElementType {
     func applyStyles(for environment: Observable<Environment>, arg: Argument) -> Disposable {
-        applyStylesToChildComponents(.init(element: self, environment: environment), arg: arg)
+        var subscriptions: [Disposable] = []
+        let context = EnvironmentContext(element: self, environment: environment, appendSubscription: { subscriptions.append($0) })
+        applyStylesToChildComponents(context, arg: arg)
+        return Disposables.create(subscriptions)
     }
 }
 
