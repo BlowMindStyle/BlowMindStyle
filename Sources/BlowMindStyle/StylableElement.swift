@@ -22,12 +22,14 @@ public struct StylableElement<Style: StyleType> {
 
     private let _getResources: (Style) -> Observable<Style.Resources>
     private let _applyStyle: (Style, Style.Resources) -> Void
+    private let _storeSubscription: (Disposable) -> Void
 
     public init<View: AnyObject>(
         view: View?,
         useStrongReference: Bool,
         getResources: @escaping (Style) -> Observable<Style.Resources>,
-        _ applyStyle: @escaping (View, Style, Style.Resources) -> Void
+        _ applyStyle: @escaping (View, Style, Style.Resources) -> Void,
+        _ storeSubscription: @escaping (Disposable) -> Void
     ) {
         _getResources = getResources
 
@@ -36,12 +38,15 @@ public struct StylableElement<Style: StyleType> {
             guard let view = storage.view else { return }
             applyStyle(view, style, resources)
         }
+
+        _storeSubscription = storeSubscription
     }
 
     public init<View>(
         view: View?,
         getResources: @escaping (Style) -> Observable<Style.Resources>,
-        _ applyStyle: @escaping (View, Style, Style.Resources) -> Void
+        _ applyStyle: @escaping (View, Style, Style.Resources) -> Void,
+        _ storeSubscription: @escaping (Disposable) -> Void
     ) {
         _getResources = getResources
 
@@ -50,20 +55,24 @@ public struct StylableElement<Style: StyleType> {
             guard let view = storage.view else { return }
             applyStyle(view, style, resources)
         }
+
+        _storeSubscription = storeSubscription
     }
 
-    public func apply(style: Style) -> Disposable {
-        _getResources(style).subscribe(onNext: { [_applyStyle] resources in
+    public func apply(style: Style) {
+        let subscription = _getResources(style).subscribe(onNext: { [_applyStyle] resources in
             _applyStyle(style, resources)
         })
+
+        _storeSubscription(subscription)
     }
 
     public func apply<ObservableState: ObservableConvertibleType, State>(
         forState state: ObservableState,
         _ styleSelector: @escaping (State) -> Style
-    ) -> Disposable
+    )
         where ObservableState.Element == State {
-            state.asObservable()
+            let subscription = state.asObservable()
                 .flatMapLatest { [_getResources] state -> Observable<(Style, Style.Resources)> in
                     let style = styleSelector(state)
                     return _getResources(style).map { (style, $0) }
@@ -71,6 +80,8 @@ public struct StylableElement<Style: StyleType> {
             .subscribe(onNext: { [_applyStyle] (style, resources) in
                 _applyStyle(style, resources)
             })
+
+            _storeSubscription(subscription)
     }
 }
 
@@ -122,7 +133,8 @@ extension EnvironmentContext where Element: AnyObject, Element: TraitCollectionP
             view: element,
             useStrongReference: false,
             getResources: { (style: Style) in filteredEnvironment.map(style.getResources(from:)) },
-            applyStyle
+            applyStyle,
+            appendSubscription
         )
     }
 
@@ -160,7 +172,8 @@ extension EnvironmentContext where Element: TraitCollectionProviderType {
         return StylableElement(
             view: element,
             getResources: { (style: Style) in filteredEnvironment.map(style.getResources(from:)) },
-            applyStyle
+            applyStyle,
+            appendSubscription
         )
     }
 
@@ -175,7 +188,7 @@ extension EnvironmentContext where Element: TraitCollectionProviderType {
 }
 
 extension StylableElement where Style: DefaultStyleType {
-    public func apply() -> Disposable {
+    public func apply() {
         apply(style: .default)
     }
 }
