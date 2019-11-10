@@ -10,16 +10,16 @@ public struct NeedUpdateStyleArgs<Environment: StyleEnvironmentType> {
     }
 }
 
-public extension NeedUpdateStyleArgs {
-    func propertyChanged<Property: Equatable>(_ keyPath: KeyPath<Environment, Property>) -> Bool {
+extension NeedUpdateStyleArgs {
+    public func propertyChanged<Property: Equatable>(_ keyPath: KeyPath<Environment, Property>) -> Bool {
         latestStyleUpdateEnvironment[keyPath: keyPath] != newEnvironment[keyPath: keyPath]
     }
 
-    func traitCollectionPropertyChanged<Property: Equatable>(_ keyPath: KeyPath<UITraitCollection, Property>) -> Bool {
+    public func traitCollectionPropertyChanged<Property: Equatable>(_ keyPath: KeyPath<UITraitCollection, Property>) -> Bool {
         latestStyleUpdateEnvironment.traitCollection[keyPath: keyPath] != newEnvironment.traitCollection[keyPath: keyPath]
     }
 
-    var userInterfaceStyleChanged: Bool {
+    public var userInterfaceStyleChanged: Bool {
         if #available(iOS 12, *) {
             return traitCollectionPropertyChanged(\.userInterfaceStyle)
         } else {
@@ -27,7 +27,7 @@ public extension NeedUpdateStyleArgs {
         }
     }
 
-    var userInterfaceLevelChanged: Bool {
+    public var userInterfaceLevelChanged: Bool {
         if #available(iOS 13, *) {
             return traitCollectionPropertyChanged(\.userInterfaceLevel)
         } else {

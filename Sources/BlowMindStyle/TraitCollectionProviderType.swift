@@ -6,8 +6,8 @@ public protocol TraitCollectionProviderType {
     var observableTraitCollection: Observable<UITraitCollection> { get }
 }
 
-public extension UITraitEnvironment where Self: NSObject {
-    var observableTraitCollection: Observable<UITraitCollection> {
+extension UITraitEnvironment where Self: NSObject {
+    public var observableTraitCollection: Observable<UITraitCollection> {
         .deferred { [weak self] in
             guard let self = self else { return .empty() }
             

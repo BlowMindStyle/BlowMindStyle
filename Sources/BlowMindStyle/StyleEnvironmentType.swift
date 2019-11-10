@@ -8,17 +8,17 @@ public protocol StyleEnvironmentType {
     var locale: Locale { get }
 }
 
-public extension StyleEnvironmentType {
-    var traitCollection: UITraitCollection { UITraitCollection() }
-    var locale: Locale { Locale.current }
+extension StyleEnvironmentType {
+    public var traitCollection: UITraitCollection { UITraitCollection() }
+    public var locale: Locale { Locale.current }
 }
 
 public struct NoTheme: Equatable {
     public init() { }
 }
 
-public extension StyleEnvironmentType where Theme == NoTheme {
-    var theme: NoTheme { NoTheme() }
+extension StyleEnvironmentType where Theme == NoTheme {
+    public var theme: NoTheme { NoTheme() }
 }
 
 public struct StyleEnvironment<Theme: Equatable>: StyleEnvironmentType {

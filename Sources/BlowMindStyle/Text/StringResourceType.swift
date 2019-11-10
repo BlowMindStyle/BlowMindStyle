@@ -11,8 +11,8 @@ public protocol StringResourceType {
     var bundle: Bundle { get }
 }
 
-public extension StringResourceType {
-    func localize(with locale: Locale?) -> String {
+extension StringResourceType {
+    public func localize(with locale: Locale?) -> String {
         let localeIdentifier: String = {
             guard let locale = locale, locale.identifier != "" else {
                 return Bundle.main.preferredLocalizations.first ?? Locale.current.identifier

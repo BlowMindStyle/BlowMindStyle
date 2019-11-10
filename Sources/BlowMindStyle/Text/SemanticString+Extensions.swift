@@ -1,16 +1,16 @@
 import Foundation
 
-public extension SemanticString {
-    func uppercased() -> SemanticString {
+extension SemanticString {
+    public func uppercased() -> SemanticString {
         mapText(transformString: { $0.uppercased() }, transformAttributedString: { $0.uppercased() })
     }
 
-    func lowercased() -> SemanticString {
+    public func lowercased() -> SemanticString {
         mapText(transformString: { $0.lowercased() }, transformAttributedString: { $0.lowercased() })
     }
 }
 
-internal extension SemanticString {
+extension SemanticString {
     func mapContent(_ transform: (Content) -> Content) -> SemanticString {
         SemanticString(components: components.map { $0.mapContent(transform) })
     }
@@ -47,13 +47,13 @@ internal extension SemanticString {
     }
 }
 
-internal extension SemanticString.StringComponent {
+extension SemanticString.StringComponent {
     func mapContent(_ transform: (SemanticString.Content) -> SemanticString.Content) -> Self {
         .init(styles: styles, content: transform(content))
     }
 }
 
-internal extension NSAttributedString {
+extension NSAttributedString {
     func uppercased() -> NSAttributedString {
         transformString { $0.uppercased() }
     }
