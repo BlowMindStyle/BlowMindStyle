@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import SemanticString
 
 open class SemanticStringStyle<StyleResources, Environment>: SemanticStringStyleType
     where

@@ -1,5 +1,6 @@
 import XCTest
 import BlowMindStyle
+import SemanticString
 
 final class BlowMindStyleTests: XCTestCase {
     func testParseSemanticStringWithTags() {

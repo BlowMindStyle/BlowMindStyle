@@ -1,5 +1,6 @@
 import UIKit
 import RxSwift
+import SemanticString
 
 public struct TextStylableElement<Style: StyleType> {
     private struct Storage<View> {

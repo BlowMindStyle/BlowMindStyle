@@ -1,3 +1,5 @@
+import SemanticString
+
 extension SemanticString.TextStyle {
     public static let body          = Self.init(rawValue: "body")
     public static let callout       = Self.init(rawValue: "callout")
