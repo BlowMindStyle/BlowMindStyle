@@ -60,7 +60,7 @@ public struct TextStylableElement<Style: StyleType> {
         _storeSubscription = storeSubscription
     }
 
-    public func apply(style: Style, text: SemanticString) {
+    public func apply(_ style: Style, text: SemanticString) {
         let subscription = _getResources(style).subscribe(onNext: { [_applyStyle] (resources, provider) in
             _applyStyle(style, resources, text.getAttributedString(provider: provider))
         })
@@ -68,7 +68,7 @@ public struct TextStylableElement<Style: StyleType> {
         _storeSubscription(subscription)
     }
 
-    public func apply(style: Style) {
+    public func apply(_ style: Style) {
         let subscription = _getResources(style).subscribe(onNext: { [_applyStyle] (resources, _) in
             _applyStyle(style, resources, nil)
         })
@@ -76,7 +76,7 @@ public struct TextStylableElement<Style: StyleType> {
         _storeSubscription(subscription)
     }
 
-    public func apply<TextObservable: ObservableConvertibleType>(style: Style, text: TextObservable)
+    public func apply<TextObservable: ObservableConvertibleType>(_ style: Style, text: TextObservable)
         where TextObservable.Element == SemanticString
     {
         let resourcesAndText = Observable.combineLatest(
@@ -239,16 +239,16 @@ extension EnvironmentContext where Element: TraitCollectionProviderType {
 
 extension TextStylableElement where Style: DefaultStyleType {
     public func apply() {
-        apply(style: .default)
+        apply(.default)
     }
 
     public func apply(text: SemanticString) {
-        apply(style: .default, text: text)
+        apply(.default, text: text)
     }
 
     public func apply<TextObservable: ObservableConvertibleType>(text: TextObservable)
         where TextObservable.Element == SemanticString
     {
-        apply(style: .default, text: text)
+        apply(.default, text: text)
     }
 }

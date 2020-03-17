@@ -9,13 +9,12 @@ open class SemanticStringStyle<StyleResources, Environment>: SemanticStringStyle
 {
     public typealias Resources = StyleResources
 
-    private typealias TextStyle = SemanticString.TextStyle
-    private typealias SetAttributes = (TextStyle, inout TextAttributes, [TextStyle], Environment) -> Void
+    public typealias SetAttributes = (SemanticString.TextStyle, inout TextAttributes, [SemanticString.TextStyle], Environment) -> Void
 
     private let _getResources: (Environment) -> StyleResources
     private let _setAttributes: SetAttributes
 
-    private init(getResources: @escaping (Environment) -> StyleResources, setAttributes: @escaping SetAttributes) {
+    public required init(getResources: @escaping (Environment) -> StyleResources, setAttributes: @escaping SetAttributes) {
         _getResources = getResources
         _setAttributes = setAttributes
     }
@@ -48,13 +47,6 @@ open class SemanticStringStyle<StyleResources, Environment>: SemanticStringStyle
         _setAttributes = { style, attributes, surroundingStyles, env in
             attributes.merge(with: getAttributes(style, attributes, surroundingStyles, env))
         }
-    }
-
-    public static func create(
-        getResources: @escaping (Environment) -> StyleResources,
-        setAttributes: @escaping (SemanticString.TextStyle, inout TextAttributes, [SemanticString.TextStyle], Environment) -> Void
-    ) -> SemanticStringStyle {
-        SemanticStringStyle(getResources: getResources, setAttributes: setAttributes)
     }
 
     public func getResources(from environment: Environment) -> Resources {

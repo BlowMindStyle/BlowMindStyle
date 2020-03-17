@@ -1,24 +1,31 @@
 import UIKit
 
-public protocol StyleEnvironmentType {
-    associatedtype Theme: Equatable = NoTheme
-
-    var traitCollection: UITraitCollection { get }
-    var theme: Theme { get }
+public protocol LocaleEnvironmentType {
     var locale: Locale { get }
 }
 
-extension StyleEnvironmentType {
-    public var traitCollection: UITraitCollection { UITraitCollection() }
-    public var locale: Locale { Locale.current }
+extension LocaleEnvironmentType {
+    public var locale: Locale {
+        Locale.current
+    }
 }
 
 public struct NoTheme: Equatable {
     public init() { }
 }
 
-extension StyleEnvironmentType where Theme == NoTheme {
+public protocol ThemeEnvironmentType {
+    associatedtype Theme: Equatable = NoTheme
+
+    var theme: Theme { get }
+}
+
+extension ThemeEnvironmentType where Theme == NoTheme {
     public var theme: NoTheme { NoTheme() }
+}
+
+public protocol StyleEnvironmentType: ThemeEnvironmentType, LocaleEnvironmentType {
+    var traitCollection: UITraitCollection { get }
 }
 
 public struct StyleEnvironment<Theme: Equatable>: StyleEnvironmentType {
@@ -35,7 +42,7 @@ public struct StyleEnvironment<Theme: Equatable>: StyleEnvironmentType {
     }
 }
 
-public protocol StyleEnvironmentConvertible {
+public protocol StyleEnvironmentConvertible: LocaleEnvironmentType, ThemeEnvironmentType {
     associatedtype StyleEnvironment: StyleEnvironmentType
 
     func toStyleEnvironment(_ traitCollection: UITraitCollection) -> StyleEnvironment

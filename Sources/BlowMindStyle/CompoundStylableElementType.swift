@@ -9,10 +9,7 @@ public protocol CompoundStylableElementType: StyleSubscriptionOwnerType {
     func applyStylesToChildComponents(_ context: Context)
 }
 
-extension CompoundStylableElementType
-    where
-    Self: TraitCollectionProviderType
-{
+extension CompoundStylableElementType {
     private func _applyStyles<EnvironmentObservable: ObservableConvertibleType>(
         for environment: EnvironmentObservable,
         additionalDisposables: [Disposable] = []
@@ -21,9 +18,9 @@ extension CompoundStylableElementType
     {
         disposeStyleSubscription()
 
-        let subscription = _applyStyles(for: environment, apply: { context in
+        let subscription = _setUpStyles(environment: environment, element: self) { context in
             applyStylesToChildComponents(context)
-        })
+        }
 
         setStyleSubscription(Disposables.create(additionalDisposables + [subscription]))
     }

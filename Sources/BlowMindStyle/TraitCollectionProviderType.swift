@@ -22,52 +22,64 @@ extension UITraitEnvironment where Self: NSObject {
 extension UIViewController: TraitCollectionProviderType { }
 extension UIView: TraitCollectionProviderType { }
 
-extension TraitCollectionProviderType {
-    func _applyStyles<EnvironmentObservable: ObservableConvertibleType, Environment>(
-        for environment: EnvironmentObservable,
-        apply: (EnvironmentContext<Self, Environment>) -> Void
+func _setUpStyles<EnvironmentObservable: ObservableConvertibleType, Environment, Element>(
+    environment: EnvironmentObservable,
+    element: Element,
+    setup: (EnvironmentContext<Element, Environment>) -> Void
+) -> Disposable
+    where
+    EnvironmentObservable.Element == Environment,
+    Environment: StyleEnvironmentConvertible
+{
+    var disposables: [Disposable] = []
+
+    var applyStylesCompleted = false
+
+    let context = EnvironmentContext(element: element, environment: environment.asObservable()) { disposable in
+        guard !applyStylesCompleted else {
+            assertionFailure("EnvironmentContext is not intended to reuse")
+
+            disposable.dispose()
+            return
+        }
+
+        disposables.append(disposable)
+    }
+
+    setup(context)
+    applyStylesCompleted = true
+
+    return Disposables.create(disposables)
+}
+
+extension NSObjectProtocol {
+    public func setUpStyles<EnvironmentObservable: ObservableConvertibleType, Environment>(
+        with environment: EnvironmentObservable,
+        setup: (EnvironmentContext<Self, Environment>) -> Void
     ) -> Disposable
         where
         EnvironmentObservable.Element == Environment,
         Environment: StyleEnvironmentConvertible
     {
-        var disposables: [Disposable] = []
-
-        var applyStylesCompleted = false
-
-        let context = EnvironmentContext(element: self, environment: environment.asObservable()) { disposable in
-            guard !applyStylesCompleted else {
-                assertionFailure("EnvironmentContext is not intended to reuse")
-
-                disposable.dispose()
-                return
-            }
-
-            disposables.append(disposable)
-        }
-
-        apply(context)
-        applyStylesCompleted = true
-
-        return Disposables.create(disposables)
+        _setUpStyles(environment: environment, element: self, setup: setup)
     }
 }
 
-extension TraitCollectionProviderType where Self: StyleSubscriptionOwnerType {
+extension NSObjectProtocol where Self: StyleSubscriptionOwnerType {
     public func setUpStyles<EnvironmentObservable: ObservableConvertibleType, Environment>(
         with environment: EnvironmentObservable,
-        _ setup: (EnvironmentContext<Self, Environment>) -> Void
+        setup: (EnvironmentContext<Self, Environment>) -> Void
     )
         where
         EnvironmentObservable.Element == Environment,
         Environment: StyleEnvironmentConvertible
     {
         disposeStyleSubscription()
-        let subscription = _applyStyles(for: environment, apply: setup)
+        let subscription = _setUpStyles(environment: environment, element: self, setup: setup)
         setStyleSubscription(subscription)
     }
 
     public func setUpStyles(_ setup: (EnvironmentContext<Self, DefaultStyleEnvironmentConvertible>) -> Void) {
-        setUpStyles(with: Observable.just(.init()), setup)
+        setUpStyles(with: Observable.just(.init()), setup: setup)
     }
 }

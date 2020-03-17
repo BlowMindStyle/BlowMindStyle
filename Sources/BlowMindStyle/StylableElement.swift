@@ -59,7 +59,7 @@ public struct StylableElement<Style: StyleType> {
         _storeSubscription = storeSubscription
     }
 
-    public func apply(style: Style) {
+    public func apply(_ style: Style) {
         let subscription = _getResources(style).subscribe(onNext: { [_applyStyle] resources in
             _applyStyle(style, resources)
         })
@@ -189,6 +189,6 @@ extension EnvironmentContext where Element: TraitCollectionProviderType {
 
 extension StylableElement where Style: DefaultStyleType {
     public func apply() {
-        apply(style: .default)
+        apply(.default)
     }
 }
