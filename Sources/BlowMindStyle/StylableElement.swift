@@ -24,9 +24,9 @@ public struct StylableElement<Style: StyleType> {
     private let _applyStyle: (Style, Style.Resources) -> Void
     private let _storeSubscription: (Disposable) -> Void
 
-    public init<View: AnyObject>(
+    public init<View>(
         view: View?,
-        useStrongReference: Bool,
+        useStrongReference: Bool = false,
         getResources: @escaping (Style) -> Observable<Style.Resources>,
         _ applyStyle: @escaping (View, Style, Style.Resources) -> Void,
         _ storeSubscription: @escaping (Disposable) -> Void
@@ -34,23 +34,6 @@ public struct StylableElement<Style: StyleType> {
         _getResources = getResources
 
         let storage = Storage(view: view, weak: !useStrongReference)
-        _applyStyle = { style, resources in
-            guard let view = storage.view else { return }
-            applyStyle(view, style, resources)
-        }
-
-        _storeSubscription = storeSubscription
-    }
-
-    public init<View>(
-        view: View?,
-        getResources: @escaping (Style) -> Observable<Style.Resources>,
-        _ applyStyle: @escaping (View, Style, Style.Resources) -> Void,
-        _ storeSubscription: @escaping (Disposable) -> Void
-    ) {
-        _getResources = getResources
-
-        let storage = Storage(view: view, weak: false)
         _applyStyle = { style, resources in
             guard let view = storage.view else { return }
             applyStyle(view, style, resources)
