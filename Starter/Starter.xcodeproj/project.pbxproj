@@ -16,8 +16,6 @@
 		EE3DCBDF23662118003B4607 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EE3DCBDE23662118003B4607 /* SnapKit */; };
 		EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */; };
 		EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */; };
-		EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE623662192003B4607 /* Subscription.swift */; };
-		EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */; };
 		EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB288DE2366DD7C00715E44 /* ViewController1.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,8 +32,6 @@
 		EE3DCBD323661FBC003B4607 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		EE3DCBE623662192003B4607 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITraitCollection+Extensions.swift"; sourceTree = "<group>"; };
 		EEA594CD2366CB5B00BD6C5C /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		EEB288DE2366DD7C00715E44 /* ViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController1.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,8 +114,6 @@
 			children = (
 				EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */,
 				EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */,
-				EE3DCBE623662192003B4607 /* Subscription.swift */,
-				EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -270,8 +264,6 @@
 				EE3DCBC623661FBC003B4607 /* AppDelegate.swift in Sources */,
 				EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */,
 				EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */,
-				EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */,
-				EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

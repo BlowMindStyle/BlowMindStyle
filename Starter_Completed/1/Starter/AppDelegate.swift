@@ -21,7 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         switch step {
         case .firstStyle:
             let vc = ViewController1()
-            vc.applyStyles()
             return vc
         }
     }

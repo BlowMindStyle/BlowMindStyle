@@ -16,13 +16,11 @@
 		EE3DCBDF23662118003B4607 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EE3DCBDE23662118003B4607 /* SnapKit */; };
 		EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */; };
 		EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */; };
-		EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE623662192003B4607 /* Subscription.swift */; };
-		EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */; };
+		EE9E8116237B2C9F001BB751 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9E8115237B2C9F001BB751 /* ButtonStyle.swift */; };
 		EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB288DE2366DD7C00715E44 /* ViewController1.swift */; };
-		EEE44C772366F4A300188D1C /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C762366F4A300188D1C /* ButtonStyle.swift */; };
-		EEE44C7A236713FD00188D1C /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C79236713FD00188D1C /* ButtonStyles.swift */; };
-		EEE44C7C23674EA300188D1C /* BackgroundStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C7B23674EA300188D1C /* BackgroundStyle.swift */; };
-		EEE44C7E23674F1B00188D1C /* BackgroundStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C7D23674F1B00188D1C /* BackgroundStyles.swift */; };
+		EEE0EEC1242BB990009569F0 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EEC0242BB990009569F0 /* ButtonStyles.swift */; };
+		EEE0EEC3242C9959009569F0 /* BackgroundStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EEC2242C9959009569F0 /* BackgroundStyle.swift */; };
+		EEE0EEC5242C9B6B009569F0 /* BackgroundStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EEC4242C9B6B009569F0 /* BackgroundStyles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,14 +36,12 @@
 		EE3DCBD323661FBC003B4607 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		EE3DCBE623662192003B4607 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITraitCollection+Extensions.swift"; sourceTree = "<group>"; };
+		EE9E8115237B2C9F001BB751 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		EEA594CD2366CB5B00BD6C5C /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		EEB288DE2366DD7C00715E44 /* ViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController1.swift; sourceTree = "<group>"; };
-		EEE44C762366F4A300188D1C /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
-		EEE44C79236713FD00188D1C /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
-		EEE44C7B23674EA300188D1C /* BackgroundStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundStyle.swift; sourceTree = "<group>"; };
-		EEE44C7D23674F1B00188D1C /* BackgroundStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundStyles.swift; sourceTree = "<group>"; };
+		EEE0EEC0242BB990009569F0 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
+		EEE0EEC2242C9959009569F0 /* BackgroundStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundStyle.swift; sourceTree = "<group>"; };
+		EEE0EEC4242C9B6B009569F0 /* BackgroundStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundStyles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,11 +98,11 @@
 		EE3DCBC423661FBC003B4607 /* Starter */ = {
 			isa = PBXGroup;
 			children = (
-				EE3DCBE323662192003B4607 /* Utils */,
-				EEE44C78236713F000188D1C /* Styles */,
-				EEE44C752366F44A00188D1C /* StyleDefinitions */,
+				EE9E8114237B2C94001BB751 /* StyleDefinitions */,
+				EEE0EEBF242BB977009569F0 /* Styles */,
 				EE2E09832366DCFF00F8EBE6 /* ViewControllers */,
 				EE2E09812366D7F000F8EBE6 /* R.generated.swift */,
+				EE3DCBE323662192003B4607 /* Utils */,
 				EE3DCBC523661FBC003B4607 /* AppDelegate.swift */,
 				EE3DCBCE23661FBC003B4607 /* Assets.xcassets */,
 				EE3DCBD023661FBC003B4607 /* LaunchScreen.storyboard */,
@@ -128,26 +124,24 @@
 			children = (
 				EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */,
 				EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */,
-				EE3DCBE623662192003B4607 /* Subscription.swift */,
-				EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		EEE44C752366F44A00188D1C /* StyleDefinitions */ = {
+		EE9E8114237B2C94001BB751 /* StyleDefinitions */ = {
 			isa = PBXGroup;
 			children = (
-				EEE44C762366F4A300188D1C /* ButtonStyle.swift */,
-				EEE44C7B23674EA300188D1C /* BackgroundStyle.swift */,
+				EE9E8115237B2C9F001BB751 /* ButtonStyle.swift */,
+				EEE0EEC2242C9959009569F0 /* BackgroundStyle.swift */,
 			);
 			path = StyleDefinitions;
 			sourceTree = "<group>";
 		};
-		EEE44C78236713F000188D1C /* Styles */ = {
+		EEE0EEBF242BB977009569F0 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
-				EEE44C79236713FD00188D1C /* ButtonStyles.swift */,
-				EEE44C7D23674F1B00188D1C /* BackgroundStyles.swift */,
+				EEE0EEC0242BB990009569F0 /* ButtonStyles.swift */,
+				EEE0EEC4242C9B6B009569F0 /* BackgroundStyles.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -294,16 +288,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE2E09822366D7F000F8EBE6 /* R.generated.swift in Sources */,
-				EEE44C772366F4A300188D1C /* ButtonStyle.swift in Sources */,
+				EEE0EEC3242C9959009569F0 /* BackgroundStyle.swift in Sources */,
+				EEE0EEC5242C9B6B009569F0 /* BackgroundStyles.swift in Sources */,
 				EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */,
 				EE3DCBC623661FBC003B4607 /* AppDelegate.swift in Sources */,
-				EEE44C7A236713FD00188D1C /* ButtonStyles.swift in Sources */,
-				EEE44C7C23674EA300188D1C /* BackgroundStyle.swift in Sources */,
+				EE9E8116237B2C9F001BB751 /* ButtonStyle.swift in Sources */,
+				EEE0EEC1242BB990009569F0 /* ButtonStyles.swift in Sources */,
 				EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */,
-				EEE44C7E23674F1B00188D1C /* BackgroundStyles.swift in Sources */,
 				EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */,
-				EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */,
-				EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

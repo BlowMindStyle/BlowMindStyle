@@ -1,10 +1,10 @@
 import UIKit
 
 extension ButtonStyle {
-    static var primary: Self {
+    static var primary: ButtonStyle {
         .init { env in
             var properties = ButtonProperties()
-            properties.backgroundColor = UIColor(named: "PrimaryButtonBackground")?.resolved(with: env.traitCollection)
+            properties.backgroundColor = UIColor(named: "PrimaryButtonBackground")
             properties.cornerRadius = 4
             properties.titleColor = .white
             properties.font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: env.traitCollection)

@@ -1,399 +1,249 @@
 # 1. Create your own style
 
-Open `Starter/Starter.xcworkspace` and run the project. You will see the lonely button on the center of the screen. We will write a style for it.
+In this article, you will learn how to create and apply styles for views.
 
-At first we need to write style definition. We will write a few types which describes 1) resources that are needed for stylization, 2) how to apply these resources to view, and 3) how API will look like.
+Open `Starter/Starter.xcworkspace` and run the project. You will see the lonely button on the center of the screen. We will add styling for the button. The final result you can see in the screenshot below:
+
+<img src="Resources/finalResult.png" alt="final result" width="129"/>
+
+Before we add the code, let's take a look at the description of what will be understood by the style.
+
+> Style is an entity that provides *a set of properties* that we assign to a view. Values of properties can depend on application/view states (I will call the union of these states an *environment*): appearance (light/dark), current locale, UITraitCollection and other.
+
+For button style, we will use next properties: background, corner radius, title color, font and paddings.
 
 - Create `StyleDefinitions` group in `Starter` project and add new file **ButtonStyle.swift** to it.
-
-All styles have similar structure, so copy text from [template](../Templates/ViewStyle.swift) and paste to created file.
-
-> Tip: you can save template into code snippet. Select all text and choose "Editor/Create Code Snippet" in menu. To insert snippet – press ⇧+⌘+L and drag-and-drop snippet to file.
-
-- Press ⌥+⌘+F to show "Find and Replace" panel. Replace *<#Component#>* on *Button* and *<#View#>* on *UIButton*. Make first letter lowercased in `var ButtonStyle` property.
-
-Let's see what types we have added:
-
-`ButtonProperties` - struct with resources for button stylization.
-- Replace `view properties` placeholder on:
-```
-public var backgroundColor: UIColor?
-public var cornerRadius: CGFloat?
-public var titleColor: UIColor?
-```
-
-`ButtonStyle` – purpose of this struct is providing resources for current environment. The environment is a type that contained values on which style can depend, like traitCollection, theme, locale, etc. Optionally a style can contain `needUpdate` method. That method receives struct with the current and previous environment and should return `true` if style resources must be applied to the view. Code from template:
-```
-EnvironmentChange.ThemeOrUserInterfaceStyle.needUpdate(arg)
-```
-It means that the button will be updated when the theme or user interface style was changed. Other changes, like horizontal/verticalSizeClass, preferredContentSizeCategory and locale will be skipped.
-
-`StylizableElements.Button` – stores UIButton and can apply resources to it. `StylizableElements` – it is a struct intended for use as a namespace for stylizable elements.
-
-- Add code to `apply(style:resources:)` method:
-```
-guard let button = view else { return }
-
-button.backgroundColor = resources.backgroundColor
-button.layer.cornerRadius = resources.cornerRadius ?? 0
-button.setTitleColor(resources.titleColor, for: .normal)
-```
-
-At the end of the file you can find extension for `EnvironmentContext`. We will return to this struct later. By now we need to know that for applying `ButtonStyle` we need to use `buttonStyle` property.
-
-
-<details>
-  <summary>At this moment ButtonStyle.swift file should be like code inside</summary>
-
-```
+- Add imports:
+```swift
 import UIKit
 import BlowMindStyle
-
-public struct ButtonProperties {
-    public var backgroundColor: UIColor?
-    public var cornerRadius: CGFloat?
-    public var titleColor: UIColor?
+```
+- Create a type for storing style properties:
+```swift
+struct ButtonProperties {
+    var backgroundColor: UIColor?
+    var cornerRadius: CGFloat?
+    var titleColor: UIColor?
+    var font: UIFont?
+    var contentEdgeInsets: UIEdgeInsets?
 }
+```
 
-public struct ButtonStyle<Environment: StyleEnvironmentType>: EnvironmentStyleType {
-    public typealias Resources = ButtonProperties
-    private let _getResources: (Environment) -> Resources
+- Create style type. Insert following code after `ButtonProperties`:
+```swift
+final class ButtonStyle<Environment: StyleEnvironmentType>: EnvironmentStyle<ButtonProperties, Environment> { }
+```
+> Note: `EnvironmentStyle` class is not intended for overriding methods, it is intended for specifying resources type (`ButtonProperties`).
 
-    public init(getResources: @escaping (Environment) -> Resources) {
-        self._getResources = getResources
-    }
-
-    public func getResources(from environment: Environment) -> Resources {
-        _getResources(environment)
-    }
-
-    public func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
-        EnvironmentChange.ThemeOrUserInterfaceStyle.needUpdate(arg)
-    }
+The purpose of this class is to provide resources for the current environment. The environment is a type that contained values on which style can depend, like traitCollection, theme, locale, etc. `EnvironmentStyle` is implementation of `EnvironmentStyleType`:
+```swift
+public protocol EnvironmentStyleType: StyleType {
+    associatedtype Environment: StyleEnvironmentType
+    func getResources(from environment: Environment) -> Resources
 }
+```
+> Style type must conform to `EnvironmentStyleType`. `EnvironmentStyle` inheritance is not required, but it is the easiest way to create style type.
 
-public extension StylizableElements {
-    struct Button<Environment: StyleEnvironmentType> {
-        weak var view: UIButton?
-    }
-}
+`ButtonStyle` initializer has argument of type `(Environment) -> ButtonProperties`. We will add a button style soon, but before we need to add code for applying `ButtonProperties` to `UIButton`.
 
-extension StylizableElements.Button: StylizableElement {
-    public func apply(style: ButtonStyle<Environment>, resources: ButtonProperties) {
-        guard let button = view else { return }
+- Insert following code after `ButtonStyle`:
+```swift
+extension EnvironmentContext where Element: UIButton {
+    var buttonStyle: StylableElement<ButtonStyle<StyleEnvironment>> {
+        stylableElement { button, style, resources in
+            button.setTitleColor(resources.titleColor, for: .normal)
 
-        button.backgroundColor = resources.backgroundColor
-        button.layer.cornerRadius = resources.cornerRadius ?? 0
-        button.setTitleColor(resources.titleColor, for: .normal)
-    }
-}
+            let cornerRadius = resources.cornerRadius ?? 0
 
-public extension EnvironmentContext where Element: UIButton, Environment: StyleEnvironmentType {
-    var buttonStyle: EnvironmentContext<StylizableElements.Button<Environment>, Environment> {
-        replacingElement(.init(view: element))
+            if let normalColor = resources.backgroundColor {
+                let normalBackground = UIImage.resizableImage(withSolidColor: normalColor, cornerRadius: cornerRadius)
+
+                button.setBackgroundImage(normalBackground, for: .normal)
+            } else {
+                button.setBackgroundImage(nil, for: .normal)
+            }
+
+            button.contentEdgeInsets = resources.contentEdgeInsets ?? .zero
+        }
     }
 }
 ```
 
-</details>
+In this code, we added api for applying `ButtonStyle`.
+`EnvironmentContext` is a struct, that stores `element` (button for example) and the `environment`. We use the constraint `where Element: UIButton`, so `buttonStyle` property is available only for subclasses of `UIButton`.
+
+`stylableElement(_:)` is function that returns `StylableElement<Style>`. That object provides methods for applying styles.
+`stylableElement(_:)` receives function which arguments are element (`UIButton` is our case), style and resources (`ButtonProperties`). In this function we assign properties to the button.
 
 We described style definition so we can add first style for button.
 
 - Add `Styles` group and **ButtonStyles.swift** file to it.
 - Insert code to added file:
-```
+```swift
 import UIKit
 
 extension ButtonStyle {
-    static var primary: Self {
+    static var primary: ButtonStyle {
         .init { env in
             var properties = ButtonProperties()
             properties.backgroundColor = UIColor(named: "PrimaryButtonBackground")
             properties.cornerRadius = 4
             properties.titleColor = .white
+            properties.font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: env.traitCollection)
+            properties.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             return properties
         }
     }
 }
 ```
 
-Here we added `primary` style as a static property.  Inside a closure we create and set up resources that would be applied to the view.
-"PrimaryButtonBackground" – named color added to Asset catalog.
+We added the `primary` style. `ButtonStyle` initializer takes a function that receives `Environment` and returns `ButtonProperties`. Via `env` we can get current traitCollection, locale, and theme. "PrimaryButtonBackground" – already added color to `Assets.xcassets`
 
-- Open **ViewController1.swift** file.
-
-`ViewController` is responsible for applying styles to child views.
-
-- Add extension to confirm `CompoundStylizableElementType`:
+We ready to apply added style.
+- Open **ViewController1.swift**
+- Add `import BlowMindStyle`
+- Add code to the end of `viewDidLoad()`:
+```swift
+button.setUpStyles {
+    $0.buttonStyle.apply(.primary)
+}
 ```
-extension ViewController1: CompoundStylizableElementType {
+- Replace button type from `.system` to `.custom`
 
+Run project, you will see styled button. It looks great!
+
+<img src="Resources/PrimaryButton.png" alt="primary button for light and dard themes" width="280"/>
+
+`setUpStyles(_:)` is simplest method for applying styles. It takes a function that receives generic `EnvironmentContext` argument. For code above the type will be `EnvironmentContext<UIButton, DefaultStyleEnvironmentConvertible>`. As name `DefaultStyleEnvironmentConvertible` says that struct is default implementation of `StyleEnvironmentConvertible`. `StyleEnvironmentConvertible` is:
+```swift
+public protocol StyleEnvironmentConvertible: LocaleEnvironmentType, ThemeEnvironmentType {
+    associatedtype StyleEnvironment: StyleEnvironmentType
+
+    func toStyleEnvironment(_ traitCollection: UITraitCollection) -> StyleEnvironment
 }
 ```
 
-- accept XCode offer to add protocol stubs.
+Both `StyleEnvironmentConvertible` and `StyleEnvironmentType` provide environment info. Some data like locale and theme propagated from `UIViewController` / `UIView` hierarchy by `BlowMindStyle` or manually. But the `traitCollection` propagated by `UIKit`. `StyleEnvironmentConvertible` is environment that not include `traitCollection` and can create `StyleEnvironment` that carries all environment data, indluding `traitCollection`.
 
-Method with name `applyStylesToChildComponents` and scary argument `context: EnvironmentContext<ViewController1, StyleEnvironment<NoTheme>>` will be added.
-
-Because protocol `CompoundStylizableElementType` has Self-requirement, we have to make the class `ViewController` final.
-
-- Add `final` keyword before `class ViewController1`
-
-- Type `context.` in `applyStylesToChildComponents` and observe properties that XCode shows in autocomplete list. You can find a `button` property, but with type `EnvironmentContext<UIButton, StyleEnvironment<NoTheme>>`, not a simple `UIButton`. Accept this suggestion
-
-- Type `.buttonStyle.apply` and choose `apply(style: ButtonStyle<StyleEnvironment<NoTheme>>)` suggestion.
-
-- Select `primary` style
-![style suggestion](Resources/PrimaryButtonStyleSuggestion.png)
-
-`EnvironmentContext` stores 2 property – `element` and `environment`.
-You can type `.button` because `EnvironmentContext` marked with [@dynamicMemberLookup](https://github.com/apple/swift-evolution/blob/master/proposals/0252-keypath-dynamic-member-lookup.md) attribute which allows a type key paths for different type, in our case `element` type.
-To stylize an element we need a 3 components – the element itself (we choose it through the `context`), the environment (transferred by `context`, thanks to it we don't need specify it manually) and the style (we specify it as `apply` method argument).
-
-Probably you want already see styles in action. The last action required to see our button:
-
-- Open **AppDelegate.swift** and add line
-```
-vc.applyStyles()
-```
-
-after the line
-```
-let vc = ViewController1()
-```
-
-- Run the project
-
-You will see the button with blue background. The title is very close to the edges. We will fix it soon. Press button, notice that background don't changed. It would be nice if the background reflected highlighted state.
-Change "Interface Style" to "Dark" in "Environment Overrides" panel. Notice that the background has become darker.
-
-You can notice warning "Result of call to 'applyStyles()' is unused". Let's fix it.
-Applying a style produces a `Disposable`. BlowMindStyle will react on Environment changes and update views until style `Disposable` is disposed.
-To fix a problem we should store `Disposable` returned by `applyStylesToChildComponents` and dispose it when `ViewController1` is destroyed.
-
-- In the file **ViewController1.swift** add `StyleDisposeBagOwnerType` conformance to `ViewController1`. Add property:
-```
-var styleDisposeBag = DisposeBag()
-```
-
-- Build the project. Warning will disappear.
-
-By now `Disposable` from `applyStylesToChildComponents` will be added to `styleDisposeBag` which will be destoyed after `ViewController1` deinitialization.
-
-> Note: it is not magic (almost) that warning did disappear. After adding the conformance of `StyleDisposeBagOwnerType` compiler chooses different `applyStyles` method, which don't have a return value.
-
-- Add a new properties to `ButtonProperties`:
-```
-public var font: UIFont?
-public var contentEdgeInsets: UIEdgeInsets?
-```
-
-- Replace `StylizableElements.Button.apply` method body on:
-```
-guard let button = view else { return }
-
-button.setTitleColor(resources.titleColor, for: .normal)
-
-let cornerRadius = resources.cornerRadius ?? 0
-
-if let normalColor = resources.backgroundColor {
-    let normalBackground = UIImage.resizableImage(withSolidColor: normalColor, cornerRadius: cornerRadius)
-
-    button.setBackgroundImage(normalBackground, for: .normal)
-} else {
-    button.setBackgroundImage(nil, for: .normal)
-}
-
-button.titleLabel?.font = resources.font ?? UIFont.systemFont(ofSize: UIFont.buttonFontSize)
-
-button.contentEdgeInsets = resources.contentEdgeInsets ?? .zero
-```
-
-Instead of using backgroudColor property we generate background image. Also we added ability to change title font.
-
-- set values for added properties in the `primary` style:
-```
-properties.font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: env.traitCollection)
-properties.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-```
-
-- run the project
-
-Button looks good. Press it – it becomes very light. To fix it replace
-```
-var button = UIButton(type: .system)
-```
-in **ViewController1.swift** on
-```
-var button = UIButton()
-```
-
-- Switch **Interface Style** to dark. Button background becomes darker. It is correct, but since `backgroundColor` is used for generating an image we should *resolve* color for current view controller UITraitCollection. If we override traitCollection generated image color can be wrong. Replace line in **ButtonStyles.swift** file:
-```
-properties.backgroundColor = UIColor(named: "PrimaryButtonBackground")
-```
-on
-```
-properties.backgroundColor = UIColor(named: "PrimaryButtonBackground")?.resolved(with: env.traitCollection)
-```
-
-Our beautiful button 😍:
-
-![primary button](Resources/PrimaryButton.png)
-
-Let's look again on our code for applying button style:
-```
-context.button.buttonStyle.apply(.primary)
-```
-
-The word button appears 2 times. It would be nice if we could write:
-```
-context.button.apply(style: .primary)
-```
-
-- Open **ButtonStyle.swift**. Add `import RxSwift`. Into `public extension EnvironmentContext` add method:
-```
-func apply(style: ButtonStyle<Environment>) -> Disposable {
-    buttonStyle.apply(style)
-}
-```
-
-And now we can use `context.button.apply(style: .primary)` syntax.
-- Replace code in **ViewController1.swift** on code above.
-
-Before we go furter try to write stylization for background. Name it `BackgroundStyle` and create `default` style.
-
-Completed files:
-<details>
-  <summary>BackgroundStyle.swift</summary>
-
-```
+Let's add a new style for setting up a view background.
+- Add file **BackgroundStyle.swift** to `StyleDefinitions` and insert following code:
+```swift
 import UIKit
 import BlowMindStyle
 
-public struct BackgroundProperties {
-    public var color: UIColor?
+struct BackgroundProperties {
+    var color: UIColor?
 }
 
-public struct BackgroundStyle<Environment: StyleEnvironmentType>: EnvironmentStyleType {
-    public typealias Resources = BackgroundProperties
-    private let _getResources: (Environment) -> Resources
+final class BackgroundStyle<Environment: StyleEnvironmentType>: EnvironmentStyle<BackgroundProperties, Environment> { }
 
-    public init(getResources: @escaping (Environment) -> Resources) {
-        self._getResources = getResources
-    }
-
-    public func getResources(from environment: Environment) -> Resources {
-        _getResources(environment)
-    }
-
-    public func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
-        EnvironmentChange.ThemeOrUserInterfaceStyle.needUpdate(arg)
+extension EnvironmentContext where Element: UIView {
+    var backgroundStyle: StylableElement<BackgroundStyle<StyleEnvironment>> {
+        stylableElement { view, style, resources in
+            view.backgroundColor = resources.color
+        }
     }
 }
-
-public extension StylizableElements {
-    struct Background<Environment: StyleEnvironmentType> {
-        weak var view: UIView?
-    }
-}
-
-extension StylizableElements.Background: StylizableElement {
-    public func apply(style: BackgroundStyle<Environment>, resources: BackgroundProperties) {
-        guard let view = view else { return }
-
-        view.backgroundColor = resources.color
-    }
-}
-
-public extension EnvironmentContext where Element: UIView, Environment: StyleEnvironmentType {
-    var backgroundStyle: EnvironmentContext<StylizableElements.Background<Environment>, Environment> {
-        replacingElement(.init(view: element))
-    }
-}
-```
-
-</details>
-
-<details>
-  <summary>BackgroundStyles.swift</summary>
 
 ```
+- Add file **BackgroundStyles.swift** to `Styles` and insert following code:
+```swift
 import UIKit
+import BlowMindStyle
 
 extension BackgroundStyle {
-    static var `default`: Self {
-        .init { env in
-            var properties = BackgroundProperties()
+    static var `default`: BackgroundStyle {
+        .init { _ in
             if #available(iOS 13, *) {
-                properties.color = .systemBackground
+                return BackgroundProperties(color: .systemBackground)
             } else {
-                properties.color = .white
+                return BackgroundProperties(color: .white)
             }
-
-            return properties
         }
     }
 }
 ```
 
-</details>
+Added code have the same structure as for button style:
+- created struct for resources (`BackgroundProperties`)
+- added style definition (`BackgroundStyle`)
+- added api for applying style `EnvironmentContext.backgroundStyle`
+- and finally added default style for `BackgroundStyle`.
 
-- Add next line in `ViewController1.applyStylesToChildComponents` method after applying button style:
-```
-context.view.backgroundStyle.apply(.default)
-```
-
-XCode will show an error:
-```
-Missing return in a function expected to return 'Disposable'; did you mean to return the last expression?
-```
-
-Both button and background stylizations return `Disposable`. We need to unite them into single `Disposable` and return it. For convenience in `Utils` folder added `Subscription` [function builder](https://github.com/apple/swift-evolution/blob/9992cf3c11c2d5e0ea20bee98657d93902d5b174/proposals/XXXX-function-builders.md).
-
-- Add `@Subscription` before `func` keyword. `applyStylesToChildComponents` should be looks like:
-```
-@Subscription func applyStylesToChildComponents(_ context: EnvironmentContext<ViewController1, StyleEnvironment<NoTheme>>) -> Disposable {
-    context.button.apply(style: .primary)
-    context.view.backgroundStyle.apply(.default)
-}
-```
-
-- Remove the next lines from `viewDidLoad` method. They are not needed.
-```
+Open **ViewController1.swift** and replace
+```swift
 if #available(iOS 13, *) {
     view.backgroundColor = .systemBackground
 } else {
     view.backgroundColor = .white
 }
 ```
-
-One more improvement. We will add the ability to skip specifying `.default` for `BackgroundStyle`.
-
-- Open **BackgroundStyles.swift**. Add `import BlowMindStyle`. Add conformance to `DefaultStyleType`. XCode will say that property must be public, fix it:
-```
-import BlowMindStyle
-
-extension BackgroundStyle: DefaultStyleType {
-    public static var `default`: Self {
-        ...
-    }
+on
+```swift
+view.setUpStyles {
+    $0.backgroundStyle.apply(.default)
 }
 ```
 
-> Note: in the [template](../Templates/ViewStyle.swift) styles marked as `public` for cases when a separate framework is used for styles. You can safety remove `public` modifier.
+Added code removes resources (colors) from `UIViewController`. If will be needed to update colors, only one place will be updated – style.
 
-- In **ViewController1.swift** replace
-```
-context.view.backgroundStyle.apply(.default)
-```
-on
-```
-context.view.backgroundStyle.apply()
+By now we have 2 setups.
+```swift
+view.setUpStyles {
+    $0.backgroundStyle.apply(.default)
+}
+...
+button.setUpStyles {
+    $0.buttonStyle.apply(.primary)
+}
 ```
 
-By now you learned a lot of – how to create style definition, styles, how to apply them to views, how to specify when a view should be updated, learned about role of `CompoundStylizableElementType` and `StyleDisposeBagOwnerType`, how to use `@Subscription` to combine `Disposable`-s and what is `EnvironmentContext` and how it works.
+Imagine if we have many views in the view controller. The code for setting up styles will take many lines of code. We can reduce it by combining setups into one block.
+- remove
+```swift
+view.setUpStyles { ... }
+```
+and
+```swift
+button.setUpStyles { ... }
+```
+- add code to the end of `viewDidLoad()`:
+```swift
+setUpStyles {
+    $0.view.backgroundStyle.apply(.default)
+    $0.button.buttonStyle.apply(.primary)
+}
+```
+Here we call `setUpStyles(_:)` on `ViewController1`. `$0` is `EnvironmentContext<ViewController1, DefaultStyleEnvironmentConvertible>`. If you open `EnvironmentContext` code you don't find `view` or `button` properties, but you may notice [@dynamicMemberLookup](https://github.com/apple/swift-evolution/blob/master/proposals/0252-keypath-dynamic-member-lookup.md) attribute. It allows use properties from `element` to create new `EnvironmentContext` that have `element` taken by key path. `EnvironmentContext<ViewController1, DefaultStyleEnvironmentConvertible>` with path `\.view` give us `EnvironmentContext<UIView, DefaultStyleEnvironmentConvertible>`, which we can use to apply `backgroundStyle`.
+
+We are almost done. The stylization code is compact and powerful, but it has 2 small aesthetics problems:
+1. Usage of `.default`. It is desirable to skip default style argument.
+2. `$0.button.buttonStyle.apply(.primary)` have two "button" words. For a button, it would be evident that we apply button style.
+
+To fix first problem, open **BackgroundStyles.swift** and conformance `DefaultStyleType` to `BackgroundStyle`:
+```swift
+extension BackgroundStyle: DefaultStyleType {
+```
+
+`DefaultStyleType` says that style have default implementation and can be skipped in `apply(_:)` method.
+
+To fix second problem open **ButtonStyle.swift** and add the following code at the end of the extension.
+```swift
+func apply(style: ButtonStyle<StyleEnvironment>) {
+    buttonStyle.apply(style)
+}
+```
+
+In **ViewController1.swift** replace `setUpStyles { ... }` on
+```swift
+setUpStyles {
+    $0.view.backgroundStyle.apply()
+    $0.button.apply(style: .primary)
+}
+```
+
+The code became a little prettier.
+
+In this article, you learned how to add and apply styles. In the [next article](Part2_createATheme.md), you will learn how to create a theme for application and how to propagate the environment through view controller hierarchy.
 
 Completed code for current section you can find in **Starter_Completed/1/** folder.
-
-In the [next section](Part2_createATheme.md) you will know how to add theme and update views after chaning the theme.
