@@ -2,16 +2,13 @@ import UIKit
 import BlowMindStyle
 
 extension BackgroundStyle: DefaultStyleType {
-    public static var `default`: Self {
-        .init { env in
-            var properties = BackgroundProperties()
+    static var `default`: BackgroundStyle {
+        .init { _ in
             if #available(iOS 13, *) {
-                properties.color = .systemBackground
+                return BackgroundProperties(color: .systemBackground)
             } else {
-                properties.color = .white
+                return BackgroundProperties(color: .white)
             }
-
-            return properties
         }
     }
 }

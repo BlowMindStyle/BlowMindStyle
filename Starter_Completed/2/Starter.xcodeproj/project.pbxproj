@@ -16,11 +16,9 @@
 		EE3DCBDF23662118003B4607 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EE3DCBDE23662118003B4607 /* SnapKit */; };
 		EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */; };
 		EE3DCBE923662192003B4607 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */; };
-		EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE623662192003B4607 /* Subscription.swift */; };
-		EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */; };
 		EE47B05A236C53C20046D4B7 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE47B059236C53C20046D4B7 /* AppTheme.swift */; };
 		EE47B05C236C58F80046D4B7 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE47B05B236C58F80046D4B7 /* AppEnvironment.swift */; };
-		EE619CDE236C5F1B005051E9 /* AppThemeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE619CDD236C5F1B005051E9 /* AppThemeProvider.swift */; };
+		EE619CDE236C5F1B005051E9 /* AppEnvironmentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE619CDD236C5F1B005051E9 /* AppEnvironmentProvider.swift */; };
 		EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB288DE2366DD7C00715E44 /* ViewController1.swift */; };
 		EEE44C772366F4A300188D1C /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C762366F4A300188D1C /* ButtonStyle.swift */; };
 		EEE44C7A236713FD00188D1C /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE44C79236713FD00188D1C /* ButtonStyles.swift */; };
@@ -41,11 +39,9 @@
 		EE3DCBD323661FBC003B4607 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		EE3DCBE623662192003B4607 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITraitCollection+Extensions.swift"; sourceTree = "<group>"; };
 		EE47B059236C53C20046D4B7 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		EE47B05B236C58F80046D4B7 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
-		EE619CDD236C5F1B005051E9 /* AppThemeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeProvider.swift; sourceTree = "<group>"; };
+		EE619CDD236C5F1B005051E9 /* AppEnvironmentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironmentProvider.swift; sourceTree = "<group>"; };
 		EEA594CD2366CB5B00BD6C5C /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		EEB288DE2366DD7C00715E44 /* ViewController1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController1.swift; sourceTree = "<group>"; };
 		EEE44C762366F4A300188D1C /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
@@ -109,7 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				EE47B059236C53C20046D4B7 /* AppTheme.swift */,
-				EE619CDD236C5F1B005051E9 /* AppThemeProvider.swift */,
+				EE619CDD236C5F1B005051E9 /* AppEnvironmentProvider.swift */,
 				EE47B05B236C58F80046D4B7 /* AppEnvironment.swift */,
 				EE3DCBE323662192003B4607 /* Utils */,
 				EEE44C78236713F000188D1C /* Styles */,
@@ -137,8 +133,6 @@
 			children = (
 				EE3DCBE423662192003B4607 /* UIColor+Extensions.swift */,
 				EE3DCBE523662192003B4607 /* UIImage+Extensions.swift */,
-				EE3DCBE623662192003B4607 /* Subscription.swift */,
-				EE3DCBE723662192003B4607 /* UITraitCollection+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -302,7 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE619CDE236C5F1B005051E9 /* AppThemeProvider.swift in Sources */,
+				EE619CDE236C5F1B005051E9 /* AppEnvironmentProvider.swift in Sources */,
 				EE2E09822366D7F000F8EBE6 /* R.generated.swift in Sources */,
 				EEE44C772366F4A300188D1C /* ButtonStyle.swift in Sources */,
 				EE3DCBE823662192003B4607 /* UIColor+Extensions.swift in Sources */,
@@ -314,8 +308,6 @@
 				EE47B05C236C58F80046D4B7 /* AppEnvironment.swift in Sources */,
 				EEB288DF2366DD7C00715E44 /* ViewController1.swift in Sources */,
 				EE47B05A236C53C20046D4B7 /* AppTheme.swift in Sources */,
-				EE3DCBEB23662192003B4607 /* UITraitCollection+Extensions.swift in Sources */,
-				EE3DCBEA23662192003B4607 /* Subscription.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

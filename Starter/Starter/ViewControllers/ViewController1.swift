@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class ViewController1: UIViewController {
-    var button = UIButton(type: .system)
+    let button = UIButton(type: .system)
 
     override func viewDidLoad() {
         super.viewDidLoad()

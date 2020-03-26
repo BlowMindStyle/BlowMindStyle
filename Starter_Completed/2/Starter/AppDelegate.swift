@@ -1,4 +1,5 @@
 import UIKit
+import BlowMindStyle
 
 enum Step {
     case firstStyle
@@ -11,8 +12,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow()
+
         let viewController = createViewController(for: .firstStyle)
-        window?.rootViewController = viewController
+        let navigationController = UINavigationController(rootViewController: viewController)
+
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         return true
     }
@@ -21,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         switch step {
         case .firstStyle:
             let vc = ViewController1()
-            let appEnvironment = AppThemeProvider.shared.observableTheme.map { AppEnvironment(theme: $0) }
-            vc.applyStyles(for: appEnvironment)
+            vc.applyStylesOnLoad(for: AppEnvironmentProvider.shared.observableEnvironment)
             return vc
         }
     }

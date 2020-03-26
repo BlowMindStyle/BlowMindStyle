@@ -1,6 +1,6 @@
 # 1. Create your own style
 
-In this article, you will learn how to create and apply styles for views.
+In this section, you will learn how to create and apply styles for views.
 
 Open `Starter/Starter.xcworkspace` and run the project. You will see the lonely button on the center of the screen. We will add styling for the button. The final result you can see in the screenshot below:
 
@@ -244,6 +244,6 @@ setUpStyles {
 
 The code became a little prettier.
 
-In this article, you learned how to add and apply styles. In the [next article](Part2_createATheme.md), you will learn how to create a theme for application and how to propagate the environment through view controller hierarchy.
+In this section, you learned how to add and apply styles. In the [next section](Part2_createATheme.md), you will learn how to create a theme for application and how to propagate the environment through view controller hierarchy.
 
 Completed code for current section you can find in **Starter_Completed/1/** folder.

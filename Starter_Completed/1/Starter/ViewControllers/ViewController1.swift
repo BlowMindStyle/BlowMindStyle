@@ -3,7 +3,7 @@ import SnapKit
 import BlowMindStyle
 
 class ViewController1: UIViewController {
-    var button = UIButton(type: .custom)
+    let button = UIButton(type: .custom)
 
     override func viewDidLoad() {
         super.viewDidLoad()
