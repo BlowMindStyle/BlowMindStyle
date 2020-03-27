@@ -1,8 +1,8 @@
 import RxSwift
 import RxCocoa
 
-final class AppThemeProvider {
-    static let shared = AppThemeProvider()
+final class AppEnvironmentProvider {
+    static let shared = AppEnvironmentProvider()
 
     private let themeRelay = BehaviorRelay(value: AppTheme.theme1)
 
@@ -14,7 +14,7 @@ final class AppThemeProvider {
         themeRelay.accept(value)
     }
 
-    var observableTheme: Observable<AppTheme> {
-        themeRelay.asObservable()
+    var observableEnvironment: Observable<AppEnvironment> {
+        themeRelay.map { AppEnvironment(theme: $0) }
     }
 }
