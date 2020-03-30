@@ -1,5 +1,8 @@
 import RxSwift
 
+/**
+ `ObservableConvertibleType` that provides an observable sequence that starts from the last environment (if exists).
+ */
 public final class EnvironmentRelay<Environment>: ObservableConvertibleType {
     private let replaySubject = ReplaySubject<Environment>.create(bufferSize: 1)
 

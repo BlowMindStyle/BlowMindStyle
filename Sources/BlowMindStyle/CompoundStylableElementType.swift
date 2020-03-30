@@ -1,11 +1,22 @@
 import UIKit
 import RxSwift
 
+/**
+ A type that can apply styles to child elements (views)
+ */
 public protocol CompoundStylableElementType: StyleSubscriptionOwnerType {
     associatedtype Environment: StyleEnvironmentConvertible = DefaultStyleEnvironmentConvertible
 
     typealias Context = EnvironmentContext<Self, Environment>
 
+    /**
+     applies styles to self and child elements.
+
+     ```
+     context.view.backgroundStyle.apply()
+     context.button.apply(style: .primary)
+     ```
+     */
     func applyStylesToChildComponents(_ context: Context)
 }
 
@@ -25,6 +36,9 @@ extension CompoundStylableElementType {
         setStyleSubscription(Disposables.create(additionalDisposables + [subscription]))
     }
 
+    /**
+     applies styles for the specified environment
+     */
     public func applyStyles<EnvironmentObservable: ObservableConvertibleType>(
         for environment: EnvironmentObservable)
         where EnvironmentObservable.Element == Environment
@@ -38,6 +52,9 @@ extension CompoundStylableElementType
     Self: TraitCollectionProviderType,
     Self: EnvironmentRepeaterType
 {
+    /**
+     applies styles for the specified environment and emits environment to `environmentRelay`
+     */
     public func applyStyles<EnvironmentObservable: ObservableConvertibleType>(
         for environment: EnvironmentObservable)
         where EnvironmentObservable.Element == Environment
@@ -79,6 +96,9 @@ extension EnvironmentContext
     Element: CompoundStylableElementType,
     Element.Environment == Environment
 {
+    /**
+     applies style to `CompoundStylableElementType`
+     */
     public func applyStyles() {
         element.applyStyles(for: environment)
     }
@@ -91,6 +111,9 @@ extension EnvironmentContext
     Element.Environment == Environment,
     Element: EnvironmentRepeaterType
 {
+    /**
+    applies style to `CompoundStylableElementType & EnvironmentRepeaterType`
+    */
     public func applyStyles() {
         element.applyStyles(for: environment)
     }
@@ -121,6 +144,9 @@ extension CompoundStylableElementType
         }
     }
 
+    /**
+     applies styles after UIViewController loading
+     */
     public func applyStylesOnLoad<EnvironmentObservable: ObservableConvertibleType>(for environment: EnvironmentObservable)
         where EnvironmentObservable.Element == Self.Environment {
             _applyStylesOnLoad(for: environment, apply: { $0.applyStyles(for: $1) })
@@ -132,6 +158,9 @@ extension CompoundStylableElementType
     Self: UIViewController,
     Self: EnvironmentRepeaterType
 {
+    /**
+     applies styles after UIViewController loading when Self: EnvironmentRepeaterType
+     */
     public func applyStylesOnLoad<EnvironmentObservable: ObservableConvertibleType>(for environment: EnvironmentObservable)
         where EnvironmentObservable.Element == Self.Environment {
             _applyStylesOnLoad(for: environment, apply: { $0.applyStyles(for: $1) })

@@ -1,6 +1,9 @@
 import RxSwift
 import UIKit
 
+/**
+ helps apply styles in different ways
+ */
 public struct StylableElement<Style: StyleType> {
     private struct Storage<View> {
         private let strongRef: View?
@@ -24,6 +27,15 @@ public struct StylableElement<Style: StyleType> {
     private let _applyStyle: (Style, Style.Resources) -> Void
     private let _storeSubscription: (Disposable) -> Void
 
+    /**
+     - Parameters:
+        - view: stylable element
+        - useStrongReference: specifies how to store view
+        - applyStyle: the function that applies style resources to the view
+        - storeSubscription: the function that stores subscriptions created during applying style.
+
+     - Note: consider using any of `EnvironmentContext.stylableElement` methods instead of the initializer.
+     */
     public init<View>(
         view: View?,
         useStrongReference: Bool = false,
@@ -42,6 +54,9 @@ public struct StylableElement<Style: StyleType> {
         _storeSubscription = storeSubscription
     }
 
+    /**
+     applies specified style to the view.
+     */
     public func apply(_ style: Style) {
         let subscription = _getResources(style).subscribe(onNext: { [_applyStyle] resources in
             _applyStyle(style, resources)
@@ -50,6 +65,9 @@ public struct StylableElement<Style: StyleType> {
         _storeSubscription(subscription)
     }
 
+    /**
+     gives the ability to select the style that will be applied depending on view or model state.
+     */
     public func apply<ObservableState: ObservableConvertibleType, State>(
         forState state: ObservableState,
         _ styleSelector: @escaping (State) -> Style
@@ -102,7 +120,16 @@ extension EnvironmentContext where Element: TraitCollectionProviderType {
     }
 }
 
-extension EnvironmentContext where Element: AnyObject, Element: TraitCollectionProviderType {
+extension EnvironmentContext where Element: TraitCollectionProviderType {
+    /**
+     creates `StylableElement`
+
+     - Parameters:
+        - needUpdateStyleStrategy: the strategy that decides should be the view updated after environment change or not
+        - applyStyle: the function that applies style resources to view
+
+     - SeeAlso: `UpdateStyleStrategyType`
+     */
     public func stylableElement<Style: EnvironmentStyleType, UpdateStrategy: UpdateStyleStrategyType>(
         _ needUpdateStyleStrategy: UpdateStrategy.Type,
         _ applyStyle: @escaping (Element, Style, Style.Resources) -> Void
@@ -121,6 +148,12 @@ extension EnvironmentContext where Element: AnyObject, Element: TraitCollectionP
         )
     }
 
+    /**
+    creates `StylableElement`. The view will be updated after any environment change.
+
+    - Parameters:
+       - applyStyle: the function that applies style resources to view
+    */
     public func stylableElement<Style: EnvironmentStyleType>(
         _ applyStyle: @escaping (Element, Style, Style.Resources) -> Void
     ) -> StylableElement<Style>
@@ -132,6 +165,12 @@ extension EnvironmentContext where Element: AnyObject, Element: TraitCollectionP
 }
 
 extension EnvironmentContext where Element: UIView {
+    /**
+    creates `StylableElement`. The view will be updated when the theme or user interface style changed.
+
+    - Parameters:
+       - applyStyle: the function that applies style resources to a view
+    */
     public func stylableElement<Style: EnvironmentStyleType>(
         _ applyStyle: @escaping (Element, Style, Style.Resources) -> Void
     ) -> StylableElement<Style>
@@ -142,35 +181,10 @@ extension EnvironmentContext where Element: UIView {
     }
 }
 
-extension EnvironmentContext where Element: TraitCollectionProviderType {
-    public func stylableElement<Style: EnvironmentStyleType, UpdateStrategy: UpdateStyleStrategyType>(
-        _ needUpdateStyleStrategy: UpdateStrategy.Type,
-        _ applyStyle: @escaping (Element, Style, Style.Resources) -> Void
-    ) -> StylableElement<Style>
-        where
-        Style.Environment == StyleEnvironment,
-        UpdateStrategy.Environment == StyleEnvironment
-    {
-        let filteredEnvironment = filteredStyleEnvironment(needUpdateStyleStrategy)
-        return StylableElement(
-            view: element,
-            getResources: { (style: Style) in filteredEnvironment.map(style.getResources(from:)) },
-            applyStyle,
-            appendSubscription
-        )
-    }
-
-    public func stylableElement<Style: EnvironmentStyleType>(
-        _ applyStyle: @escaping (Element, Style, Style.Resources) -> Void
-    ) -> StylableElement<Style>
-        where
-        Style.Environment == StyleEnvironment
-    {
-        stylableElement(EnvironmentChange.Any.self, applyStyle)
-    }
-}
-
 extension StylableElement where Style: DefaultStyleType {
+    /**
+     applies default style
+     */
     public func apply() {
         apply(.default)
     }

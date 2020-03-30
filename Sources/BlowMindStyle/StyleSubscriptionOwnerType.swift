@@ -2,17 +2,36 @@ import Foundation
 import UIKit
 import RxSwift
 
+/**
+ A type that can store style subscription.
+
+ `UIViewController` and `UIView` conform this protocol.
+ */
 public protocol StyleSubscriptionOwnerType {
+    /**
+     sets style subscription. The implementation of this method should dispose the previous style subscription.
+
+     - Parameter disposable: style subscription
+     */
     func setStyleSubscription(_ disposable: Disposable)
 }
 
 extension StyleSubscriptionOwnerType {
+    /**
+     disposes current style subscription.
+     */
     public func disposeStyleSubscription() {
         setStyleSubscription(Disposables.create())
     }
 }
 
+/**
+ A type that stores style subscription in dispose bag.
+ */
 public protocol StyleDisposeBagOwnerType: AnyObject, StyleSubscriptionOwnerType {
+    /**
+     disposeBag that stores current style subscription.
+     */
     var styleDisposeBag: DisposeBag { get set }
 }
 

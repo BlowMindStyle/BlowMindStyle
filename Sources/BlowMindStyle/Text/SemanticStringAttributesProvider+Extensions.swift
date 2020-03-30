@@ -1,6 +1,9 @@
 import SemanticString
 
 extension SemanticStringAttributesProvider {
+    /**
+     creates `SemanticStringAttributesProvider` using `SemanticStringStyleType` and environment
+     */
     public init<Style: SemanticStringStyleType>(style: Style, environment: Style.Environment) {
         self = .init(
             locale: environment.locale,
