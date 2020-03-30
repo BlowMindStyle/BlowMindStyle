@@ -2,7 +2,7 @@
 
 In the previous section, we added the primary button style. In this section, we will add the ability to change the theme in the app. The color of the button will depend on the current theme.
 
-> Note: You can find the completed first section project in **Starter_Completed/1** folder.
+> Note: You can find the completed first section project in **Tutorial/Completed/1** folder.
 
 From the previous section, you should know that the default environment type is `DefaultStyleEnvironmentConvertible`. This type doesn't use a theme, so we will create an app-specific theme and environment.
 
@@ -181,4 +181,4 @@ The application theme can be used to add different color schemes to the app, tha
 
 The purpose of the theme is to change appearance throughout the application. But sometimes we need to apply different styles according to some states. How to do this, you will learn in the [next section](Part3_switchStyles.md)
 
-Completed code for current section you can find in **Starter_Completed/2/** folder.
+Completed code for current section you can find in **Tutorial/Completed/2/** folder.

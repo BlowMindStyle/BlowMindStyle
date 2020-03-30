@@ -93,5 +93,5 @@ In XCode select File/Swift Packages/Add Package Dependency. Type 'BlowMindStyle'
 0. [Preparing the project](Tutorial/Docs/Part0_preparingTheProject.md)
 1. [Creating your own style](Tutorial/Docs/Part1_createYourOwnStyle.md)
 2. [Creating a theme](Tutorial/Docs/Part2_createATheme.md)
-3. [Switching styles according to state](Tutorial/Docs/Part3_switchStyles.md)
+3. [Switching styles according to the state](Tutorial/Docs/Part3_switchStyles.md)
 4. [Text stylization](Tutorial/Docs/Part4_textStylization.md)

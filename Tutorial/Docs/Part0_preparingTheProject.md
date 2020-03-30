@@ -1,6 +1,6 @@
 # 0. Preparing the project
 
-The repository contains the project `Starter` for which tutorial was written. The project has 2 dependencies:
+The repository contains the projects in the folder **Tutorial/Starters** for which this tutorial was written. These projects have 2 dependencies:
 - local `BlowMindStyle` swift package
 - remote `SnapKit` swift package for convinient UI layout
 

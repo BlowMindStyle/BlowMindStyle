@@ -2,7 +2,7 @@
 
 The `ButtonStyle` added in the previous sections describes appearance for a whole component (a button). Such an approach can be used to write style for `UILabel` too, but sometimes some text parts should have special stylization. For example, words with bold font, underlined phrase, highlighted text, etc.
 
-- Open "Starter.xcworkspace" from "Tutorials/Starter/Starter_4". This project contains the code from previous section and new controller `ViewControllerWithText`.
+- Open "Starter.xcodeproj" from "Tutorials/Starter/Starter_4". This project contains the code from previous section and new controller `ViewControllerWithText`.
 
 Run the project. You will see a poorly formatted text.
 

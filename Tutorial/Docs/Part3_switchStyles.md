@@ -1,8 +1,8 @@
-# 3. Switch styles according to state
+# 3. Switch styles according to the state
 
 Sometimes we need to change styles for view dynamically depending on some state. In this section, we will switch button style depending on `UISwitch` value.
 
-> Note: We will use code from previous section. You can find completed solution in **Starter_Completed/2** folder.
+> Note: We will use code from previous section. You can find completed solution in **Tutorial/Completed/2** folder.
 
 To demonstrate switching of styles we need to have at least 2 styles, but now we have only '.primary' theme. Let's add another one, `.simple` style.
 
@@ -84,4 +84,4 @@ By now you can stylize almost any type of view using described methods in previo
 
 [Next section: Text stylization](Part4_textStylization.md)
 
-Completed code for current section you can find in **Starter_Completed/3/** folder.
+Completed code for current section you can find in **Tutorial/Completed/3/** folder.

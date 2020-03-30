@@ -2,7 +2,7 @@
 
 In this section, you will learn how to create and apply styles for views.
 
-Open `Starter/Starter.xcworkspace` and run the project. You will see the lonely button on the center of the screen. We will add styling for the button. The final result you can see in the screenshot below:
+Open `Tutorial/Starters/Starter/Starter.xcodeproj` and run the project. You will see the lonely button on the center of the screen. We will add styling for the button. The final result you can see in the screenshot below:
 
 <img src="Resources/finalResult.png" alt="final result" width="129"/>
 
@@ -246,4 +246,4 @@ The code became a little prettier.
 
 In this section, you learned how to add and apply styles. In the [next section](Part2_createATheme.md), you will learn how to create a theme for application and how to propagate the environment through view controller hierarchy.
 
-Completed code for current section you can find in **Starter_Completed/1/** folder.
+Completed code for current section you can find in **Tutorial/Completed/1/** folder.
