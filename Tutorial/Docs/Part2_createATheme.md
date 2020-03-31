@@ -31,6 +31,10 @@ extension AppEnvironment: StyleEnvironmentConvertible {
 ```
 
 Open **ViewController1.swift**. To use added `AppEnvironment` we need pass observable with element type conforming to `StyleEnvironmentConvertible`. We don't yet stores current theme, so for simplicity we will use `Observable.just(AppEnvironment(theme: .theme1))`.
+- add following import line
+```swift
+import RxSwift
+```
 - replace `setUpStyles {` on `setUpStyles(with: Observable.just(AppEnvironment(theme: .theme1))) {`
 
 We need some way to notify components about changing the theme and the ability to change it. Let's create a class for these purposes.
@@ -71,7 +75,7 @@ switchControl.snp.makeConstraints { make in
     make.top.right.equalTo(view.safeAreaLayoutGuide).inset(20)
 }
 ```
-- add imports of `RxSwift` and `RxCocoa`
+- add `import RxCocoa`
 - add `disposeBag` below `let switchControl = UISwitch()` to store subscriptions:
 ```swift
 let disposeBag = DisposeBag()

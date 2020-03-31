@@ -220,7 +220,11 @@ We are almost done. The stylization code is compact and powerful, but it has 2 s
 1. Usage of `.default`. It is desirable to skip default style argument.
 2. `$0.button.buttonStyle.apply(.primary)` have two "button" words. For a button, it would be evident that we apply button style.
 
-To fix first problem, open **BackgroundStyles.swift** and conformance `DefaultStyleType` to `BackgroundStyle`:
+To fix first problem, open **BackgroundStyles.swift** and add conformance `DefaultStyleType` to `BackgroundStyle`. Replace
+```swift
+extension BackgroundStyle
+```
+on
 ```swift
 extension BackgroundStyle: DefaultStyleType {
 ```
