@@ -24,9 +24,6 @@ let package = Package(
         .target(
             name: "BlowMindStyle",
             dependencies: ["SemanticString", "RxSwift", "RxCocoa"]),
-        .testTarget(
-            name: "BlowMindStyleTests",
-            dependencies: ["BlowMindStyle"]),
     ],
     swiftLanguageVersions: [.v5]
 )
