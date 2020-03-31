@@ -33,10 +33,14 @@ public struct EnvironmentChange {
     }
 
     /**
-     The `UpdateStyleStrategyType` implementation. A view should be updated if appearance changed.
+     The `UpdateStyleStrategyType` implementation. A view should be updated if appearance or content size category changed.
      */
     public struct UserInterfaceStyle<Environment: StyleEnvironmentType>: UpdateStyleStrategyType {
         public static func needUpdate(_ arg: NeedUpdateStyleArgs<Environment>) -> Bool {
+            if arg.traitCollectionPropertyChanged(\.preferredContentSizeCategory) {
+                return true
+            }
+
             if #available(iOS 13, *) {
                 return arg.latestStyleUpdateEnvironment.traitCollection
                     .hasDifferentColorAppearance(comparedTo: arg.newEnvironment.traitCollection)
